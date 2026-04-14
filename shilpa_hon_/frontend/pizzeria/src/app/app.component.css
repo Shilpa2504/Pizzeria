@@ -1,0 +1,11 @@
+.container {
+  padding-top: 70px;
+}
+
+footer {
+  margin-top: 20px;
+  padding: 10px 0;
+  background-color: #343a40;
+  color: white;
+  text-align: center;
+}

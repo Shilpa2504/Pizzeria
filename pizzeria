@@ -1,0 +1,3017 @@
+# 🍕 Pizzeria Project — Complete Rebuild Guide
+
+> This document contains **everything** needed to rebuild the Pizzeria project from absolute scratch — including folder structure, all package details, every file's full source code, MongoDB database setup, and image URLs used throughout the app.
+
+---
+
+## Table of Contents
+
+1. [Tech Stack](#1-tech-stack)
+2. [Prerequisites](#2-prerequisites)
+3. [Project Structure](#3-project-structure)
+4. [Database Setup (MongoDB)](#4-database-setup-mongodb)
+5. [Backend Setup](#5-backend-setup)
+6. [Frontend Setup](#6-frontend-setup)
+7. [All Source Files — Backend](#7-all-source-files--backend)
+8. [All Source Files — Frontend Core](#8-all-source-files--frontend-core)
+9. [All Source Files — Components](#9-all-source-files--components)
+10. [All Source Files — Services](#10-all-source-files--services)
+11. [All CSS Files](#11-all-css-files)
+12. [Image URLs Used in the Project](#12-image-urls-used-in-the-project)
+13. [Running the Project](#13-running-the-project)
+
+---
+
+## 1. Tech Stack
+
+| Layer     | Technology           | Version       |
+|-----------|----------------------|---------------|
+| Frontend  | Angular              | 16.2.x        |
+| Frontend  | Bootstrap            | 5.3.x         |
+| Frontend  | Font Awesome         | 6.4.0 (CDN)   |
+| Frontend  | Google Fonts         | Poppins + Playfair Display (CDN) |
+| Backend   | Node.js + Express    | Express 4.x   |
+| Database  | MongoDB (local)      | 4.x driver    |
+| Language  | TypeScript           | ~5.1.3        |
+
+---
+
+## 2. Prerequisites
+
+Install these before starting:
+
+- **Node.js** v16+ — https://nodejs.org
+- **MongoDB Community** (local install, runs on port 27017) — https://www.mongodb.com/try/download/community
+- **Angular CLI** v16 — `npm install -g @angular/cli@16`
+- **nodemon** (optional, for auto-reload backend) — installed via backend package.json
+
+---
+
+## 3. Project Structure
+
+```
+shilpa_hon_/
+├── backend/
+│   ├── package.json
+│   └── server.js
+└── frontend/
+    └── pizzeria/
+        ├── angular.json
+        ├── package.json
+        ├── tsconfig.json
+        ├── tsconfig.app.json
+        ├── tsconfig.spec.json
+        └── src/
+            ├── index.html
+            ├── main.ts
+            ├── styles.css
+            └── app/
+                ├── app.module.ts
+                ├── app-routing.module.ts
+                ├── app.component.ts
+                ├── app.component.html
+                ├── app.component.css
+                ├── fetchdata.service.ts
+                ├── session.service.ts
+                ├── shopping-cart.service.ts
+                ├── sum.pipe.ts
+                ├── home/
+                ├── navbar/
+                ├── orderpizza/
+                ├── buildpizza/
+                ├── shoppingcart/
+                ├── order-success/
+                ├── login/
+                ├── signup/
+                ├── profile/
+                ├── order-history/
+                └── admin-panel/
+```
+
+---
+
+## 4. Database Setup (MongoDB)
+
+### Start MongoDB
+MongoDB runs locally on `mongodb://127.0.0.1:27017`. Start it with:
+```bash
+mongod
+```
+
+### Database Name
+```
+pizzeria
+```
+
+### Collections Required
+- `pizzas`
+- `ingredients`
+- `users`
+- `orders`
+
+---
+
+### Collection: `pizzas`
+
+Insert these documents into the `pizzas` collection using **MongoDB Compass** or `mongosh`:
+
+```js
+use pizzeria
+
+db.pizzas.insertMany([
+  {
+    name: "Margherita",
+    price: 299,
+    description: "Classic tomato sauce, fresh mozzarella and basil",
+    image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&h=300&fit=crop",
+    type: "veg",
+    rating: 4.5
+  },
+  {
+    name: "Pepperoni",
+    price: 399,
+    description: "Loaded with pepperoni slices on rich tomato sauce",
+    image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop",
+    type: "nonveg",
+    rating: 4.8
+  },
+  {
+    name: "BBQ Chicken",
+    price: 449,
+    description: "Grilled chicken with smoky BBQ sauce and red onions",
+    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop",
+    type: "nonveg",
+    rating: 4.7
+  },
+  {
+    name: "Veggie Supreme",
+    price: 349,
+    description: "Bell peppers, mushrooms, olives, onions on tomato base",
+    image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop",
+    type: "veg",
+    rating: 4.3
+  },
+  {
+    name: "Paneer Tikka",
+    price: 379,
+    description: "Spiced paneer with tikka masala sauce and onions",
+    image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop",
+    type: "veg",
+    rating: 4.6
+  },
+  {
+    name: "Chicken Tikka",
+    price: 429,
+    description: "Tandoor-marinated chicken with mint chutney base",
+    image: "https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?w=400&h=300&fit=crop",
+    type: "nonveg",
+    rating: 4.9
+  },
+  {
+    name: "Four Cheese",
+    price: 499,
+    description: "Mozzarella, cheddar, gouda and parmesan blend",
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop",
+    type: "veg",
+    rating: 4.4
+  },
+  {
+    name: "Mushroom Delight",
+    price: 329,
+    description: "Assorted mushrooms with garlic butter and thyme",
+    image: "https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=400&h=300&fit=crop",
+    type: "veg",
+    rating: 4.2
+  }
+])
+```
+
+---
+
+### Collection: `ingredients`
+
+Insert these into the `ingredients` collection:
+
+```js
+db.ingredients.insertMany([
+  {
+    tname: "Extra Cheese",
+    price: 50,
+    image: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a318?w=200&h=200&fit=crop"
+  },
+  {
+    tname: "Mushrooms",
+    price: 40,
+    image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=200&h=200&fit=crop"
+  },
+  {
+    tname: "Bell Peppers",
+    price: 35,
+    image: "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=200&h=200&fit=crop"
+  },
+  {
+    tname: "Olives",
+    price: 45,
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop"
+  },
+  {
+    tname: "Onions",
+    price: 25,
+    image: "https://images.unsplash.com/photo-1508747703725-719777637510?w=200&h=200&fit=crop"
+  },
+  {
+    tname: "Tomatoes",
+    price: 30,
+    image: "https://images.unsplash.com/photo-1546470427-e212d83e5e13?w=200&h=200&fit=crop"
+  },
+  {
+    tname: "Chicken",
+    price: 80,
+    image: "https://images.unsplash.com/photo-1604503468506-a8da13d11d36?w=200&h=200&fit=crop"
+  },
+  {
+    tname: "Paneer",
+    price: 70,
+    image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=200&h=200&fit=crop"
+  },
+  {
+    tname: "Corn",
+    price: 30,
+    image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=200&h=200&fit=crop"
+  },
+  {
+    tname: "Jalapenos",
+    price: 40,
+    image: "https://images.unsplash.com/photo-1525052757479-c3b5ce1fc0af?w=200&h=200&fit=crop"
+  }
+])
+```
+
+---
+
+## 5. Backend Setup
+
+### Step-by-step
+
+```bash
+mkdir backend
+cd backend
+npm init -y
+npm install express mongodb@4.0 cors body-parser nodemon mongoose
+```
+
+### `backend/package.json`
+
+```json
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.4",
+    "cors": "^2.8.6",
+    "express": "^4.22.1",
+    "g": "^2.0.1",
+    "mongodb": "4.0",
+    "mongoose": "^8.9.5",
+    "nodemon": "^3.1.14"
+  }
+}
+```
+
+---
+
+## 6. Frontend Setup
+
+```bash
+cd ..
+ng new pizzeria --routing=true --style=css
+cd pizzeria
+npm install bootstrap@5.3.8
+npm install @fortawesome/angular-fontawesome
+```
+
+### `frontend/pizzeria/package.json`
+
+```json
+{
+  "name": "pizzeria",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^16.2.0",
+    "@angular/common": "^16.2.0",
+    "@angular/compiler": "^16.2.0",
+    "@angular/core": "^16.2.0",
+    "@angular/forms": "^16.2.0",
+    "@angular/platform-browser": "^16.2.0",
+    "@angular/platform-browser-dynamic": "^16.2.0",
+    "@angular/router": "^16.2.0",
+    "@fortawesome/angular-fontawesome": "^0.10.0",
+    "bootstrap": "^5.3.8",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.13.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^16.2.16",
+    "@angular/cli": "^16.2.16",
+    "@angular/compiler-cli": "^16.2.0",
+    "@types/jasmine": "~4.3.0",
+    "jasmine-core": "~4.6.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.1.3"
+  }
+}
+```
+
+### Generate All Components & Services
+
+```bash
+cd frontend/pizzeria
+
+ng generate component home
+ng generate component navbar
+ng generate component orderpizza
+ng generate component buildpizza
+ng generate component shoppingcart
+ng generate component order-success
+ng generate component login
+ng generate component signup
+ng generate component profile
+ng generate component order-history
+ng generate component admin-panel
+
+ng generate service fetchdata
+ng generate service session
+ng generate service shopping-cart
+ng generate pipe sum
+```
+
+---
+
+## 7. All Source Files — Backend
+
+### `backend/server.js`
+
+```js
+let express=require('express');
+let mongodb=require('mongodb');
+let cors=require('cors');
+let bodyparser=require("body-parser");
+let app=express();
+let mongoclient=mongodb.MongoClient;
+app.use(cors());
+let url="mongodb://127.0.0.1:27017";
+let dbName="pizzeria";
+
+app.use(bodyparser.json());
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
+app.get('/pizzas',(req,res)=>{
+    mongoclient.connect(url,(error,conn)=>{
+        if(error){
+            console.log("DB Connectivity Successful");
+        }else{
+            console.log("DB Connectivity Successful..");
+            let db =conn.db(dbName);
+            db.collection('pizzas').find().toArray((e,data)=>{
+                if(e){
+                    console.log("Some error");
+                }else{
+                    res.json(data);
+                }
+                res.end();
+                conn.close();
+            })
+        }
+    })
+});
+
+app.get('/ingredients',(req,res)=>{
+    mongoclient.connect(url,(error,conn)=>{
+        if(error){
+            console.log("DB Connectivity Successful");
+        }else{
+            console.log("DB Connectivity Successful..");
+            let db =conn.db(dbName);
+            db.collection('ingredients').find().toArray((e,data)=>{
+                if(e){
+                    console.log("Some error");
+                }else{
+                    res.json(data);
+                }
+                res.end();
+                conn.close();
+            })
+        }
+    })
+});
+
+app.post('/signup', (req, res) => {
+    mongoclient.connect(url, (error, conn) => {
+        if (error) {
+            console.log("DB Connection Error");
+            res.status(500).json({ message: "Database connection failed" });
+        } else {
+            let db = conn.db(dbName);
+            let userData = req.body;
+            db.collection('users').findOne({ email: userData.email }, (err, user) => {
+                if (user) {
+                    res.status(400).json({ message: "User already exists" });
+                } else {
+                    db.collection('users').insertOne(userData, (err, result) => {
+                        if (err) {
+                            res.status(500).json({ message: "Error creating user" });
+                        } else {
+                            res.status(201).json({ message: "User created successfully" });
+                        }
+                        conn.close();
+                    });
+                }
+            });
+        }
+    });
+});
+
+app.post('/login', (req, res) => {
+    mongoclient.connect(url, (error, conn) => {
+        if (error) {
+            console.log("DB Connection Error");
+            res.status(500).json({ message: "Database connection failed" });
+        } else {
+            let db = conn.db(dbName);
+            let { email, password } = req.body;
+            db.collection('users').findOne({ email: email, password: password }, (err, user) => {
+                if (err) {
+                    res.status(500).json({ message: "Error authenticating user" });
+                } else if (!user) {
+                    res.status(401).json({ message: "Invalid credentials" });
+                } else {
+                    res.status(200).json({ message: "Login successful", user: user });
+                }
+                conn.close();
+            });
+        }
+    });
+});
+
+app.post('/save-order', (req, res) => {
+    mongoclient.connect(url, (error, conn) => {
+        if (error) {
+            console.log("DB Connection Error");
+            res.status(500).json({ message: "Database connection failed" });
+        } else {
+            let db = conn.db(dbName);
+            let orderData = { ...req.body, createdAt: new Date() };
+            db.collection('orders').insertOne(orderData, (err, result) => {
+                if (err) {
+                    res.status(500).json({ message: "Error saving order" });
+                } else {
+                    res.status(201).json({ message: "Order saved successfully", orderId: result.insertedId });
+                }
+                conn.close();
+            });
+        }
+    });
+});
+
+app.get('/orders/user/:userId', (req, res) => {
+    mongoclient.connect(url, (error, conn) => {
+        if (error) {
+            res.status(500).json({ message: "Database connection failed" });
+        } else {
+            let db = conn.db(dbName);
+            db.collection('orders').find({ userId: req.params.userId }).toArray((err, orders) => {
+                if (err) {
+                    res.status(500).json({ message: "Error fetching order history" });
+                } else {
+                    res.json(orders);
+                }
+                conn.close();
+            });
+        }
+    });
+});
+
+app.listen(7000,()=>{
+    console.log("Express Server running on port 7000..");
+})
+```
+
+---
+
+## 8. All Source Files — Frontend Core
+
+### `src/index.html`
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pizzeria - Order Delicious Pizzas Online</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Premium pizzeria with custom pizza builder and fast delivery">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <app-root></app-root>
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+```
+
+---
+
+### `src/main.ts`
+
+```ts
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
+
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.error(err));
+```
+
+---
+
+### `src/app/app.module.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { BuildpizzaComponent } from './buildpizza/buildpizza.component';
+import { ShoppingcartComponent } from './shoppingcart/shoppingcart.component';
+import { HomeComponent } from './home/home.component';
+import { OrderpizzaComponent } from './orderpizza/orderpizza.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { SumPipe } from './sum.pipe';
+import { OrderSuccessComponent } from './order-success/order-success.component';
+import { SignupComponent } from './signup/signup.component';
+import { LoginComponent } from './login/login.component';
+import { ProfileComponent } from './profile/profile.component';
+import { OrderHistoryComponent } from './order-history/order-history.component';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    BuildpizzaComponent,
+    ShoppingcartComponent,
+    HomeComponent,
+    OrderpizzaComponent,
+    NavbarComponent,
+    SumPipe,
+    OrderSuccessComponent,
+    SignupComponent,
+    LoginComponent,
+    ProfileComponent,
+    OrderHistoryComponent,
+    AdminPanelComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+---
+
+### `src/app/app-routing.module.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { BuildpizzaComponent } from './buildpizza/buildpizza.component';
+import { ShoppingcartComponent } from './shoppingcart/shoppingcart.component';
+import { HomeComponent } from './home/home.component';
+import { OrderpizzaComponent } from './orderpizza/orderpizza.component';
+import { OrderSuccessComponent } from './order-success/order-success.component';
+import { SignupComponent } from './signup/signup.component';
+import { LoginComponent } from './login/login.component';
+import { ProfileComponent } from './profile/profile.component';
+import { OrderHistoryComponent } from './order-history/order-history.component';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+
+const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
+  { path: 'buildpizza', component: BuildpizzaComponent },
+  { path: 'shoppingcart', component: ShoppingcartComponent },
+  { path: 'orderpizza', component: OrderpizzaComponent },
+  { path: 'order-success', component: OrderSuccessComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'signup', component: SignupComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: 'order-history', component: OrderHistoryComponent },
+  { path: 'admin', component: AdminPanelComponent }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+---
+
+### `src/app/app.component.ts`
+
+```ts
+import { Component, OnInit } from '@angular/core';
+import { SessionService } from './session.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  title = 'pizzeria';
+
+  constructor(private readonly sessionService: SessionService) {}
+
+  ngOnInit(): void {
+    this.sessionService.refreshUser();
+  }
+}
+```
+
+---
+
+### `src/app/app.component.html`
+
+```html
+<app-navbar></app-navbar>
+
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
+
+<footer class="page-footer">
+  <div class="footer-copyright text-center text-warning">Copyrights © 2025 <i>Pizzeria  All rights reserved</i>
+  </div>
+</footer>
+```
+
+---
+
+### `src/app/app.component.css`
+
+```css
+/* Fix navbar at the top */
+.container {
+    padding-top: 70px;
+}
+
+/* Footer styling */
+footer {
+    margin-top: 20px;
+    padding: 10px 0;
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+}
+```
+
+---
+
+## 9. All Source Files — Components
+
+### HOME COMPONENT
+
+#### `src/app/home/home.component.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { Component } from '@angular/core';
+
+interface Chef {
+  name: string;
+  specialty: string;
+  bio: string;
+  image: string;
+}
+
+interface Review {
+  text: string;
+  author: string;
+  rating: number;
+}
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent {
+
+  chefs: Chef[] = [
+    {
+      name: 'Marco Rossi',
+      specialty: 'Traditional Italian',
+      bio: 'Master chef with 20+ years of experience in authentic Italian pizzeria',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop'
+    },
+    {
+      name: 'Giovanni Santini',
+      specialty: 'Modern Fusion',
+      bio: 'Creative pizzaiolo blending traditional and contemporary flavors',
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop'
+    },
+    {
+      name: 'Luigi Ferrari',
+      specialty: 'Special Recipes',
+      bio: 'Innovative chef creating signature pizzas and specialties',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop'
+    }
+  ];
+
+  reviews: Review[] = [
+    {
+      text: 'Absolutely delicious! The freshness of ingredients and perfect crust made it the best pizza I\'ve had in years.',
+      author: 'Sarah Johnson',
+      rating: 5
+    },
+    {
+      text: 'Fast delivery and hot pizza every time. The custom pizza builder is fantastic - exactly what I wanted!',
+      author: 'Mike Chen',
+      rating: 5
+    },
+    {
+      text: 'The flavors are authentic and the service is excellent. Highly recommend to everyone!',
+      author: 'Emily Rodriguez',
+      rating: 5
+    }
+  ];
+}
+```
+
+#### `src/app/home/home.component.html`
+
+```html
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <h1>Authentic Italian Pizza</h1>
+    <p>Handcrafted pizzas made with fresh ingredients and passion</p>
+    <div class="hero-buttons">
+      <a routerLink="orderpizza" class="btn btn-light btn-lg me-3">
+        <i class="fas fa-shopping-bag"></i> Order Now
+      </a>
+      <a routerLink="buildpizza" class="btn btn-outline-light btn-lg">
+        <i class="fas fa-pizza-slice"></i> Build Your Pizza
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="text-center mb-5">Why Choose Pizzeria?</h2>
+    <div class="row g-4">
+      <div class="col-md-3 col-sm-6">
+        <div class="text-center">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-leaf fa-3x" style="color: #4caf50;"></i>
+          </div>
+          <h5>Fresh Ingredients</h5>
+          <p>Only the finest, freshest ingredients sourced locally</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="text-center">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-fire fa-3x" style="color: #ff9800;"></i>
+          </div>
+          <h5>Traditional Recipe</h5>
+          <p>Authentic Italian recipes passed down for generations</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="text-center">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-truck fa-3x" style="color: #2196f3;"></i>
+          </div>
+          <h5>Fast Delivery</h5>
+          <p>Hot, fresh pizzas delivered to your door in 45 minutes</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="text-center">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-star fa-3x" style="color: #ffc107;"></i>
+          </div>
+          <h5>Top Quality</h5>
+          <p>5-star rated by thousands of satisfied customers</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Story Section -->
+<section class="section-padding" style="background-color: #f9f9f9;">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <h2>Our Story</h2>
+        <p class="text-muted">We believe in creating exceptional pizza experiences. Founded with a passion for authentic Italian cuisine, we've been crafting the perfect pizza for years.</p>
+        <p class="text-muted">Our commitment to quality means we use only the freshest ingredients, traditional recipes, and techniques perfected over decades.</p>
+        <ul class="list-unstyled">
+          <li class="mb-3">
+            <i class="fas fa-check-circle" style="color: #4caf50;"></i>
+            <strong class="ms-2">Premium Ingredients</strong>
+          </li>
+          <li class="mb-3">
+            <i class="fas fa-check-circle" style="color: #4caf50;"></i>
+            <strong class="ms-2">Expert Chefs</strong>
+          </li>
+          <li class="mb-3">
+            <i class="fas fa-check-circle" style="color: #4caf50;"></i>
+            <strong class="ms-2">Fast Delivery</strong>
+          </li>
+        </ul>
+      </div>
+      <div class="col-lg-6">
+        <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&h=500&fit=crop" alt="Fresh Ingredients" class="img-fluid rounded-3" style="box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team Section -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="text-center mb-5">Meet Our Expert Chefs</h2>
+    <div class="row g-4">
+      <div class="col-md-4" *ngFor="let chef of chefs">
+        <div class="card text-center">
+          <img [src]="chef.image" class="card-img-top" alt="Chef">
+          <div class="card-body">
+            <h5 class="card-title">{{ chef.name }}</h5>
+            <p class="card-text text-muted">{{ chef.specialty }}</p>
+            <p class="card-text small">{{ chef.bio }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="section-padding" style="background: linear-gradient(135deg, #f0f0f0 0%, #fafafa 100%);">
+  <div class="container">
+    <h2 class="text-center mb-5">What Our Customers Say</h2>
+    <div class="row g-4">
+      <div class="col-md-4" *ngFor="let review of reviews">
+        <div class="card border-0">
+          <div class="card-body">
+            <div class="star-rating mb-3">
+              <i class="fas fa-star" *ngFor="let i of [1,2,3,4,5]"></i>
+            </div>
+            <p class="card-text">{{ review.text }}</p>
+            <footer class="blockquote-footer mt-3">{{ review.author }}</footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section-padding" style="background: linear-gradient(135deg, #6bb6d6 0%, #a1d8ce 100%); color: white;">
+  <div class="container text-center">
+    <h2 class="text-white mb-4">Ready to Order?</h2>
+    <p class="fs-5 mb-4">Explore our full menu and place your order today!</p>
+    <a routerLink="orderpizza" class="btn btn-light btn-lg">
+      <i class="fas fa-shopping-bag"></i> Order Now
+    </a>
+  </div>
+</section>
+```
+
+#### `src/app/home/home.component.css`
+
+```css
+/* Generated by GitHub Copilot */
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.feature-icon {
+  transition: transform 0.3s ease;
+}
+
+.feature-icon:hover {
+  transform: scale(1.05) rotate(2deg);
+}
+
+.btn-outline-light:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255,255,255,0.2);
+}
+
+@media (max-width: 768px) {
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+  }
+}
+```
+
+---
+
+### NAVBAR COMPONENT
+
+#### `src/app/navbar/navbar.component.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { ShoppingCartService } from '../shopping-cart.service';
+import { SessionService } from '../session.service';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.css']
+})
+export class NavbarComponent implements OnInit, OnDestroy {
+  cartCount$!: Observable<number>;
+  isLoggedIn = false;
+  userName = 'User';
+  menuOpen = false;
+
+  private readonly destroy$ = new Subject<void>();
+
+  constructor(
+    private readonly router: Router,
+    private readonly cartService: ShoppingCartService,
+    private readonly sessionService: SessionService
+  ) {
+    this.cartCount$ = this.cartService.getCart$().pipe(
+      map(items => items.reduce((count, item) => count + item.quantity, 0))
+    );
+  }
+
+  ngOnInit(): void {
+    this.sessionService.refreshUser();
+    this.sessionService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.isLoggedIn = user !== null;
+        this.userName = user?.name || user?.email?.split('@')[0] || 'User';
+        if (!user) {
+          this.menuOpen = false;
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
+  logout(): void {
+    this.menuOpen = false;
+    this.sessionService.logout();
+    this.router.navigate(['/login']);
+  }
+}
+```
+
+#### `src/app/navbar/navbar.component.html`
+
+```html
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+    <div class="container-fluid">
+      <a class="navbar-brand" routerLink="home" (click)="closeMenu()">
+        <i class="fas fa-pizza-slice"></i>
+        Pizzeria
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="home" routerLinkActive="active" (click)="closeMenu()">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="orderpizza" routerLinkActive="active" (click)="closeMenu()">Order Pizza</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="buildpizza" routerLinkActive="active" (click)="closeMenu()">Build Your Pizza</a>
+          </li>
+
+          <!-- Shopping Cart Icon -->
+          <li class="nav-item">
+            <a class="nav-link position-relative" routerLink="shoppingcart" routerLinkActive="active" (click)="closeMenu()">
+              <i class="fas fa-shopping-cart"></i>
+              Cart
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                    [class.bg-danger]="((cartCount$ | async) ?? 0) > 0"
+                    *ngIf="((cartCount$ | async) ?? 0) > 0">
+                {{ cartCount$ | async }}
+              </span>
+            </a>
+          </li>
+
+          <!-- User Menu (Logged In) -->
+          <li class="nav-item position-relative" *ngIf="isLoggedIn">
+            <button class="nav-link user-menu-btn" (click)="toggleMenu()" type="button">
+              <i class="fas fa-user-circle"></i> {{ userName }}
+            </button>
+
+            <div class="user-dropdown-menu" *ngIf="menuOpen">
+              <a class="dropdown-item-custom" routerLink="profile" (click)="closeMenu()">
+                <i class="fas fa-user"></i> Profile
+              </a>
+              <a class="dropdown-item-custom" routerLink="order-history" (click)="closeMenu()">
+                <i class="fas fa-history"></i> Order History
+              </a>
+              <hr class="dropdown-divider-custom">
+              <a class="dropdown-item-custom logout-btn" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </div>
+          </li>
+
+          <!-- Login/Signup (Not Logged In) -->
+          <li class="nav-item" *ngIf="!isLoggedIn">
+            <a class="btn btn-primary nav-link" routerLink="/login" (click)="closeMenu()">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+```
+---
+
+### LOGIN COMPONENT
+
+#### `src/app/login/login.component.ts`
+
+```ts
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { SessionService } from '../session.service';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent {
+  credentials = { email: '', password: '' };
+
+  constructor(
+    private readonly http: HttpClient,
+    private readonly router: Router,
+    private readonly sessionService: SessionService
+  ) {}
+
+  onSubmit() {
+    this.http.post('http://localhost:7000/login', this.credentials).subscribe(
+      (response: any) => {
+        this.sessionService.setUser(response.user);
+        this.router.navigate(['/shoppingcart']);
+      },
+      (error) => {
+        alert(error.error.message);
+      }
+    );
+  }
+}
+```
+
+#### `src/app/login/login.component.html`
+
+```html
+<div class="login-container">
+  <div class="login-content">
+    <!-- LEFT BOX - Creative Pizza Text -->
+    <div class="creative-box">
+      <div class="pizza-section">
+        <div class="pizza-emoji">🍕</div>
+        <h2>Welcome to Pizzeria</h2>
+        <p>Discover the authentic taste of handcrafted pizzas, made with the finest ingredients and baked to perfection in our traditional oven.</p>
+        <p>Join thousands of pizza lovers who enjoy our quick delivery service and unbeatable quality every single day.</p>
+        <p>Experience the perfect blend of tradition and innovation - creating memorable moments one pizza at a time.</p>
+      </div>
+    </div>
+
+    <!-- Book Spine (visual divider) -->
+    <div class="book-spine" aria-hidden="true"></div>
+
+    <!-- RIGHT BOX - Login Form -->
+    <div class="login-box">
+      <h2 class="text-center text-warning">Login</h2>
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <div class="form-group">
+          <label for="email" class="text-warning">Email</label>
+          <input type="email" class="form-control" id="email" [(ngModel)]="credentials.email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password" class="text-warning">Password</label>
+          <input type="password" class="form-control" id="password" [(ngModel)]="credentials.password" name="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-warning btn-block" [disabled]="!loginForm.form.valid">Login</button>
+      </form>
+      <p class="mt-3 text-center text-warning">
+        Don't have an account? <a routerLink="/signup" class="text-warning">Sign up here</a>
+      </p>
+      <p class="text-center text-warning mt-3">
+        <a routerLink="/home" class="text-warning">Continue as Guest</a>
+      </p>
+    </div>
+  </div>
+</div>
+```
+
+---
+
+### SIGNUP COMPONENT
+
+#### `src/app/signup/signup.component.ts`
+
+```ts
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-signup',
+  templateUrl: './signup.component.html',
+  styleUrls: ['./signup.component.css']
+})
+export class SignupComponent {
+  user = { name: '', email: '', password: '' };
+
+  constructor(private http: HttpClient, private router: Router) {}
+
+  onSubmit() {
+    this.http.post('http://localhost:7000/signup', this.user).subscribe(
+      (response: any) => {
+        this.router.navigate(['/login']);
+      },
+      (error) => {
+        alert(error.error.message);
+      }
+    );
+  }
+}
+```
+
+#### `src/app/signup/signup.component.html`
+
+```html
+<div class="signup-container">
+    <div class="signup-box">
+      <h2 class="text-center text-warning">Sign Up</h2>
+      <form (ngSubmit)="onSubmit()" #signupForm="ngForm">
+        <div class="form-group">
+          <label for="name" class="text-warning">Name</label>
+          <input type="text" class="form-control" id="name" [(ngModel)]="user.name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email" class="text-warning">Email</label>
+          <input type="email" class="form-control" id="email" [(ngModel)]="user.email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password" class="text-warning">Password</label>
+          <input type="password" class="form-control" id="password" [(ngModel)]="user.password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-warning btn-block" [disabled]="!signupForm.form.valid">Sign Up</button>
+      </form>
+      <p class="mt-3 text-center text-warning">
+        Already have an account? <a routerLink="/login" class="text-warning">Login here</a>
+      </p>
+    </div>
+</div>
+```
+
+---
+
+### ORDER PIZZA COMPONENT
+
+#### `src/app/orderpizza/orderpizza.component.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { Component, OnInit } from '@angular/core';
+import { FetchdataService, Pizza } from '../fetchdata.service';
+import { ShoppingCartService } from '../shopping-cart.service';
+
+@Component({
+  selector: 'app-orderpizza',
+  templateUrl: './orderpizza.component.html',
+  styleUrls: ['./orderpizza.component.css']
+})
+export class OrderpizzaComponent implements OnInit {
+
+  orderPizzaData: Pizza[] = [];
+  filteredPizzas: Pizza[] = [];
+  searchQuery: string = '';
+  notFetched = true;
+  isLoading = false;
+  errorMessage: string = '';
+
+  selectedVegetarian: boolean | null = null;
+  maxPriceFilter: number = 1000;
+  sortBy: 'name' | 'price' | 'rating' = 'name';
+
+  cartData: any[] = [];
+  pizzaQuantities: { [key: string]: number } = {};
+
+  constructor(
+    private readonly fd: FetchdataService,
+    private readonly cartService: ShoppingCartService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadPizzas();
+    this.cartService.getCart$().subscribe(() => {
+      this.syncQuantitiesFromCart();
+    });
+  }
+
+  loadPizzas(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.fd.fetchOrderPizza().subscribe(
+      (resp: Pizza[]) => {
+        this.orderPizzaData = resp;
+        this.filteredPizzas = resp;
+        this.notFetched = false;
+        this.applyFilters();
+      },
+      (error) => {
+        console.error('Error fetching pizzas:', error);
+        this.errorMessage = 'Failed to load pizzas. Please try again.';
+        this.notFetched = true;
+      },
+      () => {
+        this.isLoading = false;
+      }
+    );
+  }
+
+  onSearch(): void {
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    this.filteredPizzas = this.orderPizzaData.filter(pizza => {
+      if (this.searchQuery && !pizza.name.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+        return false;
+      }
+      if (this.selectedVegetarian !== null && this.isVeg(pizza) !== this.selectedVegetarian) {
+        return false;
+      }
+      if (pizza.price > this.maxPriceFilter) {
+        return false;
+      }
+      return true;
+    });
+    this.sortPizzas();
+  }
+
+  sortPizzas(): void {
+    this.filteredPizzas.sort((a, b) => {
+      switch (this.sortBy) {
+        case 'price': return a.price - b.price;
+        case 'rating': {
+          const ratingA = a.rating || 0;
+          const ratingB = b.rating || 0;
+          return ratingB - ratingA;
+        }
+        case 'name':
+        default: return a.name.localeCompare(b.name);
+      }
+    });
+  }
+
+  isVeg(pizza: Pizza): boolean {
+    if (typeof pizza.vegetarian === 'boolean') return pizza.vegetarian;
+    if (pizza.type) return pizza.type.toLowerCase() === 'veg';
+    return false;
+  }
+
+  getAverageRating(pizza: Pizza): number {
+    if (!pizza.reviews || pizza.reviews.length === 0) return 0;
+    const sum = pizza.reviews.reduce((acc, review) => acc + review.rating, 0);
+    return sum / pizza.reviews.length;
+  }
+
+  getRatingStars(rating: number): number[] {
+    return new Array(5).fill(0).map((_, i) => i < Math.round(rating) ? 1 : 0);
+  }
+
+  getReviewCount(pizza: Pizza): number {
+    return pizza.reviews?.length || 0;
+  }
+
+  addToCart(pizza: Pizza): void {
+    const pizzaId = pizza._id || pizza.name;
+    const currentQty = this.getQuantity(pizza);
+    if (currentQty === 0) {
+      const cartItem = {
+        id: pizzaId,
+        name: pizza.name,
+        price: pizza.price,
+        quantity: 1,
+        image: pizza.image,
+        type: 'preset' as const
+      };
+      this.cartService.addToCart(cartItem);
+      this.pizzaQuantities[pizzaId] = 1;
+    } else {
+      this.incrementQuantity(pizza);
+    }
+  }
+
+  private syncQuantitiesFromCart(): void {
+    const cartItems = this.cartService.getCart();
+    this.pizzaQuantities = {};
+    cartItems.forEach(item => {
+      if (item.type === 'preset') {
+        this.pizzaQuantities[item.id] = item.quantity;
+      }
+    });
+  }
+
+  getQuantity(pizza: Pizza): number {
+    const pizzaId = pizza._id || pizza.name;
+    return this.pizzaQuantities[pizzaId] || 0;
+  }
+
+  isInCart(pizza: Pizza): boolean {
+    return this.getQuantity(pizza) > 0;
+  }
+
+  incrementQuantity(pizza: Pizza): void {
+    const pizzaId = pizza._id || pizza.name;
+    const currentQty = this.getQuantity(pizza);
+    this.cartService.updateQuantity(pizzaId, currentQty + 1);
+    this.pizzaQuantities[pizzaId] = currentQty + 1;
+  }
+
+  decrementQuantity(pizza: Pizza): void {
+    const pizzaId = pizza._id || pizza.name;
+    const currentQty = this.getQuantity(pizza);
+    if (currentQty <= 1) {
+      this.cartService.removeFromCart(pizzaId);
+      delete this.pizzaQuantities[pizzaId];
+    } else {
+      this.cartService.updateQuantity(pizzaId, currentQty - 1);
+      this.pizzaQuantities[pizzaId] = currentQty - 1;
+    }
+  }
+
+  updateQuantity(pizza: Pizza, newQuantity: number): void {
+    const pizzaId = pizza._id || pizza.name;
+    if (newQuantity <= 0) {
+      this.cartService.removeFromCart(pizzaId);
+      delete this.pizzaQuantities[pizzaId];
+    } else {
+      this.cartService.updateQuantity(pizzaId, newQuantity);
+      this.pizzaQuantities[pizzaId] = newQuantity;
+    }
+  }
+
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.selectedVegetarian = null;
+    this.maxPriceFilter = 1000;
+    this.sortBy = 'name';
+    this.applyFilters();
+  }
+}
+```
+
+#### `src/app/orderpizza/orderpizza.component.html`
+
+(See Section 9 — the full HTML was already shown above in the reading step. Paste all of it here as-is.)
+
+```html
+<div class="container section-padding">
+  <!-- Header -->
+  <div class="mb-5">
+    <h2 class="mb-2">Order Our Delicious Pizzas</h2>
+    <p class="text-muted">Browse our selection of authentic pizzas and customize your order</p>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="card mb-5 border-0">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-lg-4">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-0"><i class="fas fa-search"></i></span>
+            <input type="text" class="form-control bg-light border-0" placeholder="Search pizzas..."
+              [(ngModel)]="searchQuery" (input)="onSearch()">
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <select class="form-select bg-light border-0" [(ngModel)]="sortBy" (change)="sortPizzas()">
+            <option value="name">Sort by Name</option>
+            <option value="price">Sort by Price</option>
+            <option value="rating">Sort by Rating</option>
+          </select>
+        </div>
+        <div class="col-lg-2">
+          <select class="form-select bg-light border-0" [(ngModel)]="selectedVegetarian" (change)="applyFilters()">
+            <option [ngValue]="null">All Types</option>
+            <option [ngValue]="true">Vegetarian</option>
+            <option [ngValue]="false">Non-Vegetarian</option>
+          </select>
+        </div>
+        <div class="col-lg-2">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-0">₹</span>
+            <input type="range" class="form-range form-control-range" min="0" max="1000"
+              [(ngModel)]="maxPriceFilter" (change)="applyFilters()">
+            <span class="input-group-text bg-light border-0">{{ maxPriceFilter }}</span>
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+            <i class="fas fa-redo"></i> Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <div class="text-center py-5" *ngIf="isLoading">
+    <div class="spinner-border text-danger" aria-hidden="true">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading pizzas...</p>
+  </div>
+
+  <div class="alert alert-warning text-center" *ngIf="notFetched && !isLoading">
+    <i class="fas fa-exclamation-triangle"></i> Could not fetch pizzas. Please try again later.
+  </div>
+
+  <div class="alert alert-info text-center" *ngIf="!notFetched && filteredPizzas.length === 0 && !isLoading">
+    <i class="fas fa-search"></i> No pizzas match your filters. Try adjusting your search criteria.
+  </div>
+
+  <div class="row g-4" *ngIf="!notFetched && filteredPizzas.length > 0">
+    <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let pizza of filteredPizzas">
+      <div class="card h-100 pizza-card">
+        <div class="position-relative overflow-hidden" style="height: 180px;">
+          <img [src]="pizza.image || 'assets/placeholder.png'" [alt]="pizza.name"
+            class="card-img-top h-100 w-100" style="object-fit: cover;">
+          <div class="position-absolute top-0 end-0 p-2">
+            <span class="badge" [ngClass]="isVeg(pizza) ? 'bg-success' : 'bg-danger'">
+              {{ isVeg(pizza) ? 'Veg' : 'Non-Veg' }}
+            </span>
+          </div>
+        </div>
+        <div class="card-body d-flex flex-column p-3">
+          <div class="card-header-section mb-2">
+            <h6 class="card-title">{{ pizza.name }}</h6>
+            <span class="veg-badge" [ngClass]="isVeg(pizza) ? 'veg' : 'nonveg'">
+              {{ isVeg(pizza) ? '🥬 Veg' : '🍗 Non-Veg' }}
+            </span>
+          </div>
+          <div class="rating-section mb-2" *ngIf="getAverageRating(pizza) > 0">
+            <div class="stars">
+              <i class="fas fa-star" *ngFor="let star of getRatingStars(getAverageRating(pizza))" style="color: #fbbf24;"></i>
+              <i class="fas fa-star empty" *ngFor="let star of getRatingStars(5 - getAverageRating(pizza))" style="opacity: 0.3;"></i>
+            </div>
+            <small class="review-count">({{ getReviewCount(pizza) }} reviews)</small>
+          </div>
+          <p class="card-description">{{ pizza.description }}</p>
+          <div class="price-section mb-3">
+            <span class="price-label">Price</span>
+            <span class="price-amount">₹{{ pizza.price }}</span>
+          </div>
+          <div class="action-buttons mt-auto">
+            <button *ngIf="!isInCart(pizza)" class="btn-add-to-cart" (click)="addToCart(pizza)">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+            <div *ngIf="isInCart(pizza)" class="quantity-controls">
+              <button class="btn-qty" (click)="decrementQuantity(pizza)"><i class="fas fa-minus"></i></button>
+              <span class="qty-display">{{ getQuantity(pizza) }}</span>
+              <button class="btn-qty" (click)="incrementQuantity(pizza)"><i class="fas fa-plus"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-4 text-muted" *ngIf="!notFetched && filteredPizzas.length > 0">
+    Showing {{ filteredPizzas.length }} of {{ orderPizzaData.length }} pizzas
+  </div>
+</div>
+```
+
+---
+
+### BUILD PIZZA COMPONENT
+
+#### `src/app/buildpizza/buildpizza.component.ts`
+
+```ts
+import { Component } from '@angular/core';
+import { ShoppingCartService } from '../shopping-cart.service';
+import { Router } from '@angular/router';
+import { FetchdataService } from '../fetchdata.service';
+
+export interface BuildPizza {
+  id: string;
+  tname: string;
+  price: number;
+  checked: boolean;
+  image: string;
+}
+
+@Component({
+  selector: 'app-buildpizza',
+  templateUrl: './buildpizza.component.html',
+  styleUrls: ['./buildpizza.component.css']
+})
+export class BuildpizzaComponent {
+  buildPizzaData: BuildPizza[] = [];
+  cost = 0;
+  checkedIngredients: BuildPizza[] = [];
+  notFetched = true;
+  dataMessage: any;
+  public customPizzaData: BuildPizza[] = [];
+
+  constructor(
+    private fd: FetchdataService,
+    private router: Router,
+    private cartService: ShoppingCartService
+  ) {
+    this.fd.fetchBuildPizza().subscribe(
+      (response) => {
+        this.buildPizzaData = response.map(ing => ({
+          id: ing._id || ing.name || ing.tname || '',
+          tname: ing.tname || ing.name || '',
+          price: ing.price,
+          checked: false,
+          image: ing.image || ''
+        }));
+        this.customPizzaData = [...this.buildPizzaData];
+        this.customPizzaData.forEach((data) => (data.checked = false));
+        this.notFetched = false;
+        this.cartService.getCart$().subscribe((message) => {
+          this.dataMessage = message;
+        });
+      },
+      (error) => {
+        console.log('Error in fetching buildpizza data', error);
+      }
+    );
+  }
+
+  toggleIngredient(ingredient: BuildPizza): void {
+    ingredient.checked = !ingredient.checked;
+    if (ingredient.checked) {
+      this.checkedIngredients.push(ingredient);
+      this.cost += ingredient.price;
+    } else {
+      this.checkedIngredients = this.checkedIngredients.filter(item => item.id !== ingredient.id);
+      this.cost -= ingredient.price;
+    }
+  }
+
+  sendIngredients(): void {
+    if (this.checkedIngredients.length === 0) return;
+    const customPizzaItem = {
+      id: `custom_${Date.now()}`,
+      name: `Custom Pizza (${this.checkedIngredients.map(i => i.tname).join(', ')})`,
+      price: this.cost,
+      quantity: 1,
+      type: 'custom' as const,
+      image: 'assets/custom-pizza.png'
+    };
+    this.cartService.addToCart(customPizzaItem);
+    this.router.navigate(['/shoppingcart']);
+  }
+}
+```
+
+#### `src/app/buildpizza/buildpizza.component.html`
+
+```html
+<div class="container mt-4 mb-4">
+  <div class="text-center mb-4">
+    <h5 class="text-primary mb-2">🍕 Build Your Custom Pizza</h5>
+    <p class="text-muted" style="font-size: 0.9rem;">Select your favorite toppings and create your perfect pizza</p>
+  </div>
+  <p class="text-center text-danger fw-bold" *ngIf="notFetched">Could Not Fetch Data</p>
+
+  <div class="ingredients-grid mb-5">
+    <div class="ingredient-card"
+         *ngFor="let bp of customPizzaData; let i = index"
+         [class.selected]="bp.checked"
+         (click)="toggleIngredient(bp)">
+      <div class="card-image">
+        <img [src]="bp.image" alt="{{ bp.tname }}" class="img-fluid">
+      </div>
+      <div class="card-info">
+        <div class="card-name">{{ bp.tname }}</div>
+        <div class="card-price">+₹{{ bp.price }}</div>
+      </div>
+      <div class="card-checkbox">
+        <div class="checkbox-icon" [class.checked]="bp.checked">
+          <i class="fas" [ngClass]="bp.checked ? 'fa-check-circle' : 'fa-circle'"></i>
+        </div>
+        <span class="badge-text" *ngIf="bp.checked">Added</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="total-section mt-5">
+    <div class="total-box">
+      <div class="total-label">Your Pizza Total</div>
+      <div class="total-amount">₹<span class="amount-value">{{ cost }}</span></div>
+    </div>
+  </div>
+
+  <div class="build-action mt-4">
+    <button class="btn-build-pizza" [disabled]="checkedIngredients.length === 0" (click)="sendIngredients()">
+      <i class="fas fa-pizza-slice"></i>
+      <span>Add to Cart</span>
+    </button>
+    <p class="build-hint" *ngIf="checkedIngredients.length === 0">Select at least one topping to continue</p>
+  </div>
+</div>
+```
+
+---
+
+### ORDER SUCCESS COMPONENT
+
+#### `src/app/order-success/order-success.component.ts`
+
+```ts
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-order-success',
+  templateUrl: './order-success.component.html',
+  styleUrls: ['./order-success.component.css']
+})
+export class OrderSuccessComponent implements OnInit {
+  totalCost: number = 0;
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.totalCost = Number(params['cost']) || 0;
+    });
+  }
+}
+```
+
+#### `src/app/order-success/order-success.component.html`
+
+```html
+<div class="container py-5">
+  <div class="text-center">
+    <img src="assets/PizzeriaLogo.png" alt="Pizzeria Logo" style="width: 20%; height: auto;">
+    <div class="mt-4 mb-3">
+      <span style="font-size: 4rem;">🎉</span>
+    </div>
+    <h1 class="text-success fw-bold">Thank You for Your Order!</h1>
+    <h4 class="text-muted mt-2">Your order has been successfully placed.</h4>
+
+    <div class="card border-success mx-auto mt-4" style="max-width: 380px;">
+      <div class="card-body">
+        <h5 class="card-title text-success mb-3">
+          <i class="fas fa-receipt"></i> Order Summary
+        </h5>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="fs-6 text-muted">Amount Paid</span>
+          <span class="fs-4 fw-bold text-dark">{{ totalCost | currency:'INR':'symbol':'1.0-0' }}</span>
+        </div>
+        <hr>
+        <small class="text-muted">(Includes items, 5% tax &amp; delivery)</small>
+      </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
+      <a routerLink="/order-history" class="btn btn-primary">
+        <i class="fas fa-history"></i> View Order History
+      </a>
+      <a routerLink="/orderpizza" class="btn btn-outline-secondary">
+        <i class="fas fa-pizza-slice"></i> Order Again
+      </a>
+    </div>
+  </div>
+</div>
+```
+
+---
+
+### PROFILE COMPONENT
+
+#### `src/app/profile/profile.component.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { Component, OnInit } from '@angular/core';
+import { FetchdataService, User, Address } from '../fetchdata.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-profile',
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css']
+})
+export class ProfileComponent implements OnInit {
+
+  user: User | null = null;
+  addresses: Address[] = [];
+  isLoading = false;
+  isEditing = false;
+  showAddressForm = false;
+  successMessage = '';
+  errorMessage = '';
+
+  editingUser: User = { name: '', email: '', phone: '' };
+  newAddress: Address = { street: '', city: '', state: '', zip: '', country: '' };
+
+  constructor(private fd: FetchdataService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.loadUserProfile();
+  }
+
+  loadUserProfile(): void {
+    this.isLoading = true;
+    const userData = localStorage.getItem('user');
+    if (!userData) { this.router.navigate(['/login']); return; }
+    try {
+      this.user = JSON.parse(userData);
+      if (this.user) {
+        this.editingUser = { ...this.user };
+        this.loadAddresses();
+      }
+    } catch (error) {
+      this.errorMessage = 'Failed to load user profile';
+    }
+    this.isLoading = false;
+  }
+
+  loadAddresses(): void {
+    if (!this.user || !this.user._id) return;
+    this.fd.getUserAddresses(this.user._id).subscribe(
+      (addresses: Address[]) => { this.addresses = addresses; },
+      (error) => { console.error('Error loading addresses:', error); }
+    );
+  }
+
+  toggleEdit(): void {
+    this.isEditing = !this.isEditing;
+    if (!this.isEditing) { this.editingUser = { ...this.user! }; this.errorMessage = ''; }
+  }
+
+  saveProfile(): void {
+    if (!this.user || !this.user._id) return;
+    if (!this.editingUser.name || !this.editingUser.email) {
+      this.errorMessage = 'Name and email are required'; return;
+    }
+    this.isLoading = true;
+    this.fd.updateUserProfile(this.user._id, this.editingUser).subscribe(
+      () => {
+        this.user = this.editingUser;
+        localStorage.setItem('user', JSON.stringify(this.user));
+        this.isEditing = false;
+        this.successMessage = 'Profile updated successfully!';
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      () => { this.errorMessage = 'Failed to update profile.'; },
+      () => { this.isLoading = false; }
+    );
+  }
+
+  toggleAddressForm(): void {
+    this.showAddressForm = !this.showAddressForm;
+    if (!this.showAddressForm) this.resetAddressForm();
+  }
+
+  addAddress(): void {
+    if (!this.user || !this.user._id) return;
+    if (!this.newAddress.street || !this.newAddress.city || !this.newAddress.zip) {
+      this.errorMessage = 'Please fill all required fields'; return;
+    }
+    this.fd.addUserAddress(this.user._id, this.newAddress).subscribe(
+      (address: Address) => {
+        this.addresses.push(address);
+        this.showAddressForm = false;
+        this.resetAddressForm();
+        this.successMessage = 'Address added!';
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      () => { this.errorMessage = 'Failed to add address.'; }
+    );
+  }
+
+  deleteAddress(addressId: string | undefined): void {
+    if (!this.user?._id || !addressId) return;
+    this.fd.deleteUserAddress(this.user._id, addressId).subscribe(
+      () => { this.addresses = this.addresses.filter(a => a._id !== addressId); },
+      () => { this.errorMessage = 'Failed to delete address.'; }
+    );
+  }
+
+  resetAddressForm(): void {
+    this.newAddress = { street: '', city: '', state: '', zip: '', country: '' };
+  }
+
+  goToOrderHistory(): void { this.router.navigate(['/order-history']); }
+
+  logoutUser(): void {
+    localStorage.removeItem('user');
+    this.router.navigate(['/login']);
+  }
+}
+```
+
+---
+
+### ORDER HISTORY COMPONENT
+
+#### `src/app/order-history/order-history.component.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { Component, OnInit } from '@angular/core';
+import { FetchdataService, Order } from '../fetchdata.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-order-history',
+  templateUrl: './order-history.component.html',
+  styleUrls: ['./order-history.component.css']
+})
+export class OrderHistoryComponent implements OnInit {
+
+  orders: Order[] = [];
+  filteredOrders: Order[] = [];
+  isLoading = false;
+  errorMessage = '';
+  statusFilter: string = 'all';
+  expandedOrderId: string | null = null;
+
+  statusConfig: any = {
+    'pending': { badge: 'warning', icon: 'fas fa-clock', label: 'Pending' },
+    'confirmed': { badge: 'info', icon: 'fas fa-check-circle', label: 'Confirmed' },
+    'preparing': { badge: 'info', icon: 'fas fa-utensils', label: 'Preparing' },
+    'out-for-delivery': { badge: 'primary', icon: 'fas fa-truck', label: 'Out for Delivery' },
+    'delivered': { badge: 'success', icon: 'fas fa-check', label: 'Delivered' },
+    'cancelled': { badge: 'danger', icon: 'fas fa-times', label: 'Cancelled' }
+  };
+
+  constructor(private fd: FetchdataService, private router: Router) {}
+
+  ngOnInit(): void { this.loadOrderHistory(); }
+
+  loadOrderHistory(): void {
+    const userData = localStorage.getItem('user');
+    if (!userData) { this.router.navigate(['/login']); return; }
+    try {
+      const user = JSON.parse(userData);
+      if (!user._id) { this.router.navigate(['/login']); return; }
+      this.isLoading = true;
+      this.fd.getOrderHistory(user._id).subscribe(
+        (orders: Order[]) => {
+          this.orders = orders.sort((a, b) =>
+            new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime());
+          this.applyStatusFilter();
+        },
+        () => { this.errorMessage = 'Failed to load order history.'; },
+        () => { this.isLoading = false; }
+      );
+    } catch (e) { this.router.navigate(['/login']); }
+  }
+
+  applyStatusFilter(): void {
+    this.filteredOrders = this.statusFilter === 'all'
+      ? [...this.orders]
+      : this.orders.filter(o => o.status === this.statusFilter);
+  }
+
+  toggleOrderDetails(orderId: string | undefined): void {
+    if (!orderId) return;
+    this.expandedOrderId = this.expandedOrderId === orderId ? null : orderId;
+  }
+
+  isOrderExpanded(orderId: string | undefined): boolean {
+    return this.expandedOrderId === orderId;
+  }
+
+  getStatusBadgeClass(status: string): string {
+    return `bg-${this.statusConfig[status]?.badge || 'secondary'}`;
+  }
+
+  getStatusIcon(status: string): string {
+    return this.statusConfig[status]?.icon || 'fas fa-question';
+  }
+
+  getStatusLabel(status: string): string {
+    return this.statusConfig[status]?.label || status;
+  }
+
+  formatDate(date: Date | undefined): string {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  getDaysSinceOrder(date: Date | undefined): string {
+    if (!date) return '';
+    const days = Math.floor((Date.now() - new Date(date).getTime()) / (1000 * 60 * 60 * 24));
+    return days === 0 ? 'Today' : days === 1 ? 'Yesterday' : `${days} days ago`;
+  }
+}
+```
+
+---
+
+### ADMIN PANEL COMPONENT
+
+#### `src/app/admin-panel/admin-panel.component.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { Component, OnInit } from '@angular/core';
+import { FetchdataService, Order } from '../fetchdata.service';
+
+@Component({
+  selector: 'app-admin-panel',
+  templateUrl: './admin-panel.component.html',
+  styleUrls: ['./admin-panel.component.css']
+})
+export class AdminPanelComponent implements OnInit {
+
+  orders: Order[] = [];
+  filteredOrders: Order[] = [];
+  dashboardStats: any = {};
+  isLoading = false;
+  errorMessage = '';
+  statusFilter: string = 'all';
+  selectedOrder: Order | null = null;
+  updatingOrderId: string | null = null;
+
+  statusOptions = [
+    { value: 'pending', label: 'Pending', color: 'warning' },
+    { value: 'confirmed', label: 'Confirmed', color: 'info' },
+    { value: 'preparing', label: 'Preparing', color: 'info' },
+    { value: 'out-for-delivery', label: 'Out for Delivery', color: 'primary' },
+    { value: 'delivered', label: 'Delivered', color: 'success' },
+    { value: 'cancelled', label: 'Cancelled', color: 'danger' }
+  ];
+
+  constructor(private fd: FetchdataService) {}
+
+  ngOnInit(): void { this.loadOrders(); this.loadDashboardStats(); }
+
+  loadOrders(): void {
+    this.isLoading = true;
+    this.fd.getAllOrders().subscribe(
+      (orders: Order[]) => {
+        this.orders = orders.sort((a, b) =>
+          new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime());
+        this.applyFilters();
+      },
+      () => { this.errorMessage = 'Failed to load orders.'; },
+      () => { this.isLoading = false; }
+    );
+  }
+
+  loadDashboardStats(): void {
+    this.fd.getDashboardStats().subscribe(
+      (stats: any) => { this.dashboardStats = stats; },
+      () => {}
+    );
+  }
+
+  applyFilters(): void {
+    this.filteredOrders = this.statusFilter === 'all'
+      ? [...this.orders]
+      : this.orders.filter(o => o.status === this.statusFilter);
+  }
+
+  updateOrderStatus(orderId: string | undefined, newStatus: string): void {
+    if (!orderId) return;
+    this.updatingOrderId = orderId;
+    this.fd.updateOrderStatus(orderId, newStatus).subscribe(
+      () => {
+        const order = this.orders.find(o => o._id === orderId);
+        if (order) { order.status = newStatus as any; this.applyFilters(); }
+        this.updatingOrderId = null;
+      },
+      () => { this.errorMessage = 'Failed to update order status.'; this.updatingOrderId = null; }
+    );
+  }
+
+  selectOrder(order: Order): void {
+    this.selectedOrder = this.selectedOrder?._id === order._id ? null : order;
+  }
+
+  getStatusLabel(status: string): string {
+    return this.statusOptions.find(opt => opt.value === status)?.label || status;
+  }
+
+  getStatusColor(status: string): string {
+    return this.statusOptions.find(opt => opt.value === status)?.color || 'secondary';
+  }
+
+  getOrderCount(status: string): number {
+    return status === 'all' ? this.orders.length : this.orders.filter(o => o.status === status).length;
+  }
+
+  getTotalRevenue(): number {
+    return this.orders.filter(o => o.status === 'delivered').reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+  }
+
+  getOrderTotal(order: Order): number {
+    return order.totalAmount || order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  }
+
+  formatDate(date: Date | undefined): string {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  refresh(): void { this.loadOrders(); this.loadDashboardStats(); }
+}
+```
+
+---
+
+## 10. All Source Files — Services
+
+### `src/app/fetchdata.service.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface Pizza {
+  _id?: string;
+  name: string;
+  price: number;
+  description?: string;
+  image?: string;
+  rating?: number;
+  reviews?: Review[];
+  size?: string;
+  vegetarian?: boolean;
+  type?: string;
+}
+
+export interface Ingredient {
+  _id?: string;
+  name?: string;
+  tname?: string;
+  price: number;
+  category?: string;
+  image?: string;
+}
+
+export interface Review {
+  _id?: string;
+  userId: string;
+  pizzaId: string;
+  rating: number;
+  comment: string;
+  date: Date;
+}
+
+export interface User {
+  _id?: string;
+  name: string;
+  email: string;
+  password?: string;
+  phone?: string;
+  address?: Address[];
+  createdAt?: Date;
+}
+
+export interface Address {
+  _id?: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  isDefault?: boolean;
+}
+
+export interface Order {
+  _id?: string;
+  userId: string;
+  items: OrderItem[];
+  totalAmount: number;
+  status: 'pending' | 'confirmed' | 'preparing' | 'out-for-delivery' | 'delivered' | 'cancelled';
+  deliveryAddress: Address;
+  paymentMethod: string;
+  discount?: number;
+  couponCode?: string;
+  createdAt?: Date;
+  estimatedDelivery?: Date;
+}
+
+export interface OrderItem {
+  pizzaId: string;
+  name: string;
+  quantity: number;
+  price: number;
+  customizations?: string[];
+}
+
+@Injectable({ providedIn: 'root' })
+export class FetchdataService {
+
+  private readonly apiUrl = 'http://localhost:7000';
+  cartData: any;
+
+  constructor(private readonly http: HttpClient) {}
+
+  fetchOrderPizza(): Observable<Pizza[]> {
+    return this.http.get<Pizza[]>(`${this.apiUrl}/pizzas`);
+  }
+
+  fetchBuildPizza(): Observable<Ingredient[]> {
+    return this.http.get<Ingredient[]>(`${this.apiUrl}/ingredients`);
+  }
+
+  getPizzaById(id: string): Observable<Pizza> {
+    return this.http.get<Pizza>(`${this.apiUrl}/pizzas/${id}`);
+  }
+
+  signup(userData: User): Observable<any> {
+    return this.http.post(`${this.apiUrl}/signup`, userData);
+  }
+
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, { email, password });
+  }
+
+  getUserProfile(userId: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/users/${userId}`);
+  }
+
+  updateUserProfile(userId: string, userData: Partial<User>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${userId}`, userData);
+  }
+
+  getUserAddresses(userId: string): Observable<Address[]> {
+    return this.http.get<Address[]>(`${this.apiUrl}/users/${userId}/addresses`);
+  }
+
+  addUserAddress(userId: string, address: Address): Observable<Address> {
+    return this.http.post<Address>(`${this.apiUrl}/users/${userId}/addresses`, address);
+  }
+
+  deleteUserAddress(userId: string, addressId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/users/${userId}/addresses/${addressId}`);
+  }
+
+  saveOrder(orderData: Order): Observable<any> {
+    return this.http.post(`${this.apiUrl}/save-order`, orderData);
+  }
+
+  getOrderHistory(userId: string): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.apiUrl}/orders/user/${userId}`);
+  }
+
+  getOrderById(orderId: string): Observable<Order> {
+    return this.http.get<Order>(`${this.apiUrl}/orders/${orderId}`);
+  }
+
+  updateOrderStatus(orderId: string, status: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/orders/${orderId}/status`, { status });
+  }
+
+  getAllOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.apiUrl}/orders`);
+  }
+
+  getDashboardStats(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/stats`);
+  }
+
+  cancelOrder(orderId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/orders/${orderId}/cancel`, {});
+  }
+}
+```
+
+---
+
+### `src/app/session.service.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+export interface User {
+  _id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class SessionService {
+  private readonly userSubject = new BehaviorSubject<User | null>(this.getCurrentUser());
+  public readonly user$: Observable<User | null> = this.userSubject.asObservable();
+
+  constructor() {}
+
+  private getCurrentUser(): User | null {
+    try {
+      const userData = localStorage.getItem('user');
+      return userData ? JSON.parse(userData) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  isLoggedIn(): boolean {
+    return this.userSubject.value !== null;
+  }
+
+  getCurrentUserSync(): User | null {
+    return this.userSubject.value;
+  }
+
+  setUser(user: User): void {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.userSubject.next(user);
+  }
+
+  logout(): void {
+    localStorage.removeItem('user');
+    this.userSubject.next(null);
+  }
+
+  refreshUser(): void {
+    this.userSubject.next(this.getCurrentUser());
+  }
+}
+```
+
+---
+
+### `src/app/shopping-cart.service.ts`
+
+```ts
+// Generated by GitHub Copilot
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+export interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+  type: 'preset' | 'custom';
+}
+
+@Injectable({ providedIn: 'root' })
+export class ShoppingCartService {
+  private readonly _buildPizzaDataSource: BehaviorSubject<CartItem[]> = new BehaviorSubject<CartItem[]>([]);
+  currentMessage$ = this._buildPizzaDataSource.asObservable();
+  private cartItems: CartItem[] = [];
+
+  constructor() { this.loadCart(); }
+
+  updateMessage(newMessage: CartItem[]): void {
+    this.cartItems = newMessage;
+    this._buildPizzaDataSource.next(newMessage);
+    this.saveCart();
+  }
+
+  getCart(): CartItem[] { return this.cartItems; }
+  getCart$(): Observable<CartItem[]> { return this.currentMessage$; }
+  getCartCount(): number { return this.cartItems.reduce((count, item) => count + item.quantity, 0); }
+  getCartTotal(): number { return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0); }
+
+  addToCart(item: CartItem): void {
+    const existingItem = this.cartItems.find(i => i.id === item.id);
+    if (!existingItem) {
+      this.cartItems.push({ ...item });
+    }
+    this.updateMessage(this.cartItems);
+  }
+
+  removeFromCart(itemId: string): void {
+    this.cartItems = this.cartItems.filter(item => item.id !== itemId);
+    this.updateMessage(this.cartItems);
+  }
+
+  updateQuantity(itemId: string, quantity: number): void {
+    const item = this.cartItems.find(i => i.id === itemId);
+    if (item) {
+      item.quantity = quantity;
+      if (item.quantity <= 0) {
+        this.removeFromCart(itemId);
+      } else {
+        this.updateMessage(this.cartItems);
+      }
+    }
+  }
+
+  clearCart(): void {
+    this.cartItems = [];
+    this.updateMessage([]);
+  }
+
+  private saveCart(): void {
+    localStorage.setItem('cart', JSON.stringify(this.cartItems));
+  }
+
+  private loadCart(): void {
+    try {
+      const saved = localStorage.getItem('cart');
+      this.cartItems = saved ? JSON.parse(saved) : [];
+      this._buildPizzaDataSource.next(this.cartItems);
+    } catch (e) {
+      this.cartItems = [];
+    }
+  }
+}
+```
+
+---
+
+### `src/app/sum.pipe.ts`
+
+```ts
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({ name: 'sum' })
+export class SumPipe implements PipeTransform {
+  transform(items: any[], attr: string): any {
+    return items.reduce((a, b) => a + b[attr], 0);
+  }
+}
+```
+
+---
+
+## 11. All CSS Files
+
+### `src/styles.css` (Global Styles)
+
+```css
+/* Generated by GitHub Copilot */
+:root {
+  --primary-color: #7c3aed;
+  --secondary-color: #a78bfa;
+  --accent-color: #f3e8ff;
+  --dark-color: #4a5568;
+  --light-color: #fafafa;
+  --text-dark: #2d3748;
+  --text-light: #718096;
+  --success-color: #68d391;
+  --warning-color: #f6ad55;
+  --danger-color: #fc8181;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-dark);
+  background-color: var(--light-color);
+  line-height: 1.5;
+}
+
+h1 { font-family: 'Playfair Display', serif; font-size: 2rem; letter-spacing: 0.5px; }
+h2 { font-size: 1.4rem; margin-bottom: 1.2rem; color: #7c3aed; font-weight: 600; }
+h3 { font-size: 1rem; font-weight: 500; }
+
+.navbar {
+  background: #ffffff !important;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #7c3aed !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+  color: white;
+  padding: 40px 2rem 30px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section h1 { color: white; font-size: 2rem; margin-bottom: 0.6rem; }
+.hero-section p { font-size: 0.95rem; margin-bottom: 1.2rem; opacity: 0.9; }
+
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+
+.btn {
+  border-radius: 18px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.btn-primary { background-color: #7c3aed; color: white; }
+.btn-primary:hover { background-color: #6d28d9; transform: translateY(-2px); }
+
+.btn-warning {
+  background-color: #7c3aed !important;
+  border-color: #7c3aed !important;
+  font-weight: 500;
+  border-radius: 20px;
+}
+
+.btn-warning:hover {
+  background-color: #6d28d9 !important;
+  transform: translateY(-2px);
+}
+
+.section-padding { padding: 3rem 0; }
+
+.page-footer {
+  background-color: #343a40;
+  color: white;
+  padding: 15px 0;
+  text-align: center;
+  margin-top: 20px;
+}
+```
+
+---
+
+### `src/app/navbar/navbar.component.css`
+
+```css
+/* Generated by GitHub Copilot */
+:host {
+  --primary-orange: #E85D04;
+  --hover-orange: #D9480F;
+  --soft-orange: #F48C06;
+  --main-text: #2D2A26;
+  --secondary-text: #6B7280;
+  --border-color: #E9D8C8;
+}
+
+.navbar {
+  position: sticky; top: 0; z-index: 200 !important;
+  background-color: #FFFFFF !important;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 1rem 0;
+}
+.navbar-brand { font-weight: 700; color: var(--primary-orange) !important; font-size: 1.3rem; display: flex; align-items: center; gap: 0.5rem; }
+.navbar-brand:hover { color: var(--hover-orange) !important; }
+.navbar-brand i { font-size: 1.5rem; }
+.navbar-nav .nav-link { padding: 0.5rem 1rem; color: var(--main-text) !important; font-weight: 500; transition: all 0.3s ease; }
+.navbar-nav .nav-link:hover { color: var(--primary-orange) !important; }
+.navbar-nav .nav-link.active { color: var(--primary-orange) !important; border-bottom: 2px solid var(--primary-orange); }
+
+.navbar-nav .btn {
+  margin-left: 10px;
+  background: linear-gradient(135deg, var(--primary-orange) 0%, var(--soft-orange) 100%);
+  color: white !important; border: none; border-radius: 6px; padding: 0.5rem 1rem; font-weight: 600;
+}
+
+.navbar-nav .btn:hover { background: linear-gradient(135deg, var(--hover-orange) 0%, var(--primary-orange) 100%); transform: translateY(-2px); }
+
+.user-menu-btn { cursor: pointer !important; padding: 0.5rem 1rem !important; color: var(--main-text) !important; background: none !important; border: none !important; display: flex; align-items: center; gap: 0.5rem; font-weight: 500; border-radius: 6px; }
+.user-menu-btn:hover { background-color: rgba(232, 93, 4, 0.1) !important; color: var(--primary-orange) !important; }
+
+.user-dropdown-menu {
+  position: absolute; top: 100%; right: 0;
+  background: white; border: 1px solid var(--border-color); border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15); min-width: 200px; z-index: 1000; margin-top: 8px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item-custom { display: block; padding: 0.75rem 1.5rem; color: var(--main-text); text-decoration: none; cursor: pointer; transition: all 0.2s ease; }
+.dropdown-item-custom:hover { background-color: var(--primary-orange); color: white; }
+.dropdown-item-custom i { margin-right: 0.5rem; width: 18px; text-align: center; }
+.logout-btn { color: #dc3545; }
+.logout-btn:hover { background-color: #dc3545 !important; color: white !important; }
+.dropdown-divider-custom { margin: 0.5rem 0; border: none; border-top: 1px solid var(--border-color); }
+
+.badge { background-color: var(--primary-orange) !important; color: white; font-weight: 700; padding: 0.4rem 0.6rem; border-radius: 10px; font-size: 0.75rem; }
+```
+
+---
+
+### `src/app/login/login.component.css`
+
+```css
+/* Generated by GitHub Copilot */
+body { background-color: #f5f5f5; color: #333; }
+
+.login-container {
+  display: flex; justify-content: center; align-items: center;
+  min-height: 100vh; padding: 20px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+}
+
+.login-content {
+  display: grid; grid-template-columns: 1fr 18px 1fr;
+  gap: 0; max-width: 1000px; width: 100%; padding: 20px; position: relative;
+}
+
+.book-spine {
+  grid-column: 2; grid-row: 1 / span 2;
+  align-self: stretch; width: 18px; height: 80%; margin: auto 0;
+  background: linear-gradient(180deg, #e0cda9 0%, #bfa76a 100%);
+  box-shadow: 0 0 16px 2px rgba(80,60,20,0.18); border-radius: 9px; z-index: 3;
+  border-left: 2px solid #d1b97a; border-right: 2px solid #d1b97a;
+}
+
+.creative-box {
+  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+  padding: 50px 45px; border-radius: 16px; box-shadow: -10px 10px 40px rgba(124,58,237,0.25);
+  display: flex; align-items: center; justify-content: center; min-height: 480px;
+  transform: perspective(1200px) rotateY(5deg); transition: all 0.3s ease;
+}
+
+.creative-box:hover { box-shadow: -15px 15px 50px rgba(124,58,237,0.35); }
+.pizza-section { color: white; text-align: left; }
+
+.pizza-emoji { font-size: 60px; margin-bottom: 20px; display: block; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
+
+.creative-box h2 { font-size: 32px; font-weight: 700; margin: 0 0 25px 0; color: white; }
+.creative-box p { font-size: 15px; line-height: 1.8; margin: 0 0 18px 0; color: rgba(255,255,255,0.98); text-align: justify; }
+
+.login-box {
+  background-color: #222; padding: 50px 45px; border-radius: 16px;
+  box-shadow: 10px 10px 40px rgba(0,0,0,0.4); width: 100%; min-height: 480px;
+  display: flex; flex-direction: column; justify-content: center;
+  transform: perspective(1200px) rotateY(-5deg); transition: all 0.3s ease;
+}
+
+.login-box h2 { margin-bottom: 30px; font-size: 28px; font-weight: 700; }
+.form-group { margin-bottom: 22px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+
+.form-control {
+  background-color: #333; border: 1px solid #ffc107;
+  color: white; padding: 12px 16px; border-radius: 8px; font-size: 14px; width: 100%;
+}
+.form-control::placeholder { color: #888; }
+.form-control:focus { background-color: #444; border-color: #ffeb3b; box-shadow: 0 0 12px rgba(255,235,59,0.4); outline: none; }
+
+.btn-warning {
+  background-color: #ffc107; border: none; color: #222;
+  padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  cursor: pointer; width: 100%; margin-top: 10px; transition: all 0.3s ease;
+}
+
+.btn-warning:hover:not(:disabled) { background-color: #e0a800; transform: translateY(-3px); }
+.btn-warning:disabled { opacity: 0.5; cursor: not-allowed; }
+.text-warning { color: #ffc107; }
+```
+
+---
+
+### `src/app/signup/signup.component.css`
+
+```css
+body { background-color: black; color: white; }
+
+.signup-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
+
+.signup-box {
+  background-color: #222; padding: 30px; border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(255,215,0,0.5); width: 100%; max-width: 400px;
+}
+
+.form-group { margin-bottom: 15px; }
+.form-control { background-color: #333; border: 1px solid #ffc107; color: white; }
+.form-control:focus { background-color: #444; border-color: #ffeb3b; box-shadow: none; }
+.btn-warning { background-color: #ffc107; border: none; }
+.btn-warning:hover { background-color: #e0a800; }
+a { text-decoration: none; }
+a:hover { text-decoration: underline; }
+```
+
+---
+
+### `src/app/orderpizza/orderpizza.component.css`
+
+```css
+/* Generated by GitHub Copilot */
+:host {
+  --primary-orange: #E85D04; --hover-orange: #D9480F; --soft-orange: #F48C06;
+  --main-bg: #FFF8F2; --card-bg: #FFFFFF; --section-bg: #FFF1E6;
+  --main-text: #2D2A26; --secondary-text: #6B7280; --border-color: #E9D8C8; --success-green: #2E9E5B;
+}
+
+.pizza-card {
+  border: 1px solid var(--border-color); border-left: 4px solid var(--primary-orange);
+  border-radius: 12px; overflow: hidden; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: var(--card-bg);
+}
+
+.pizza-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(232,93,4,0.2); }
+.pizza-card .card-img-top { transition: transform 0.3s ease; height: 180px; object-fit: cover; }
+.pizza-card:hover .card-img-top { transform: scale(1.08); }
+
+.card-header-section { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; }
+.card-title { font-size: 1rem; font-weight: 700; color: var(--main-text); margin: 0; flex: 1; }
+
+.veg-badge { font-size: 0.75rem; font-weight: 600; padding: 0.35rem 0.6rem; border-radius: 16px; white-space: nowrap; }
+.veg-badge.veg { background: #dcfce7; color: #166534; }
+.veg-badge.nonveg { background: #fee2e2; color: #991b1b; }
+
+.stars { display: flex; gap: 0.2rem; font-size: 0.9rem; color: #f59e0b; }
+.review-count { font-size: 0.75rem; color: var(--secondary-text); font-weight: 500; }
+
+.card-description {
+  font-size: 0.8rem; color: var(--secondary-text); margin: 0 0 0.5rem 0;
+  min-height: 2.8em; max-height: 2.8em; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.price-section { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--section-bg); border-radius: 8px; border-left: 3px solid var(--primary-orange); }
+.price-label { font-size: 0.85rem; font-weight: 600; color: var(--secondary-text); }
+.price-amount { font-size: 1.2rem; font-weight: 800; color: var(--primary-orange); font-family: 'Courier New', monospace; }
+
+.btn-add-to-cart {
+  flex: 1; background: linear-gradient(135deg, var(--primary-orange) 0%, var(--soft-orange) 100%);
+  color: white; border: none; padding: 0.7rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
+
+.btn-add-to-cart:hover:not(:disabled) { transform: translateY(-2px); background: linear-gradient(135deg, var(--hover-orange) 0%, var(--primary-orange) 100%); }
+
+.quantity-controls { display: flex; align-items: center; gap: 0.5rem; width: 100%; background: linear-gradient(135deg, var(--section-bg) 0%, rgba(244,140,6,0.1) 100%); padding: 0.5rem; border-radius: 8px; border: 2px solid var(--border-color); }
+.btn-qty { background: var(--card-bg); border: 2px solid var(--border-color); color: var(--primary-orange); padding: 0.5rem 0.65rem; border-radius: 6px; cursor: pointer; transition: all 0.25s ease; }
+.btn-qty:hover { background: var(--primary-orange); color: white; }
+.qty-display { flex: 1; text-align: center; font-weight: 700; font-size: 1.1rem; color: var(--primary-orange); }
+```
+
+---
+
+### `src/app/buildpizza/buildpizza.component.css`
+
+```css
+/* Generated by GitHub Copilot */
+:host {
+  --primary-orange: #E85D04; --hover-orange: #D9480F; --soft-orange: #F48C06;
+  --main-bg: #FFF8F2; --card-bg: #FFFFFF; --section-bg: #FFF1E6;
+  --main-text: #2D2A26; --secondary-text: #6B7280; --border-color: #E9D8C8;
+}
+
+.ingredients-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+
+.ingredient-card {
+  display: flex; align-items: center; gap: 1.2rem; padding: 1.2rem;
+  border: 2px solid var(--border-color); border-radius: 12px; background: var(--card-bg);
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.ingredient-card:hover { border-color: var(--primary-orange); box-shadow: 0 8px 24px rgba(232,93,4,0.12); transform: translateY(-4px); }
+.ingredient-card.selected { border-color: var(--primary-orange); background: linear-gradient(135deg, rgba(232,93,4,0.08) 0%, rgba(244,140,6,0.04) 100%); box-shadow: 0 8px 24px rgba(232,93,4,0.18); }
+
+.card-image { width: 100px; height: 100px; border-radius: 10px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.card-image img { width: 100%; height: 100%; object-fit: cover; }
+.card-name { font-size: 1rem; font-weight: 700; color: var(--main-text); margin-bottom: 0.4rem; }
+.card-price { font-size: 0.95rem; color: var(--primary-orange); font-weight: 700; }
+
+.checkbox-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border-color); color: var(--secondary-text); font-size: 1.4rem; transition: all 0.3s ease; background: var(--card-bg); }
+.checkbox-icon.checked { border-color: var(--primary-orange); background: linear-gradient(135deg, var(--primary-orange) 0%, var(--soft-orange) 100%); color: white; box-shadow: 0 4px 12px rgba(232,93,4,0.3); }
+
+.badge-text { font-size: 0.75rem; font-weight: 700; color: var(--primary-orange); opacity: 0; transition: opacity 0.3s ease; }
+.ingredient-card.selected .badge-text { opacity: 1; }
+
+.total-box { background: linear-gradient(135deg, var(--section-bg) 0%, rgba(244,140,6,0.1) 100%); border: 2px solid var(--border-color); border-radius: 16px; padding: 2rem 3rem; text-align: center; min-width: 300px; }
+.total-label { font-size: 0.95rem; color: var(--secondary-text); font-weight: 500; margin-bottom: 0.5rem; }
+.total-amount { font-size: 2.5rem; font-weight: 800; color: var(--primary-orange); }
+
+.btn-build-pizza { background: linear-gradient(135deg, var(--primary-orange) 0%, var(--soft-orange) 100%); color: white; border: none; padding: 1rem 3rem; border-radius: 50px; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; transition: all 0.3s ease; }
+.btn-build-pizza:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(232,93,4,0.4); }
+.btn-build-pizza:disabled { opacity: 0.5; cursor: not-allowed; }
+.build-hint { font-size: 0.9rem; color: var(--secondary-text); margin-top: 0.75rem; }
+```
+
+---
+
+## 12. Image URLs Used in the Project
+
+All images come from **Unsplash** (free to use). No local image files are needed except for the logo.
+
+### Pizza Images (stored in MongoDB `pizzas` collection)
+
+| Pizza | URL |
+|-------|-----|
+| Margherita | `https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&h=300&fit=crop` |
+| Pepperoni | `https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop` |
+| BBQ Chicken | `https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop` |
+| Veggie Supreme | `https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop` |
+| Paneer Tikka | `https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop` |
+| Chicken Tikka | `https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?w=400&h=300&fit=crop` |
+| Four Cheese | `https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop` |
+| Mushroom Delight | `https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=400&h=300&fit=crop` |
+
+### Chef Images (hardcoded in `home.component.ts`)
+
+| Chef | URL |
+|------|-----|
+| Marco Rossi | `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop` |
+| Giovanni Santini | `https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop` |
+| Luigi Ferrari | `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop` |
+
+### Home Page Story Image (hardcoded in `home.component.html`)
+
+`https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&h=500&fit=crop`
+
+### Ingredient Images (stored in MongoDB `ingredients` collection)
+
+| Ingredient | URL |
+|------------|-----|
+| Extra Cheese | `https://images.unsplash.com/photo-1486297678162-eb2a19b0a318?w=200&h=200&fit=crop` |
+| Mushrooms | `https://images.unsplash.com/photo-1544025162-d76694265947?w=200&h=200&fit=crop` |
+| Bell Peppers | `https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=200&h=200&fit=crop` |
+| Olives | `https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop` |
+| Onions | `https://images.unsplash.com/photo-1508747703725-719777637510?w=200&h=200&fit=crop` |
+| Tomatoes | `https://images.unsplash.com/photo-1546470427-e212d83e5e13?w=200&h=200&fit=crop` |
+| Chicken | `https://images.unsplash.com/photo-1604503468506-a8da13d11d36?w=200&h=200&fit=crop` |
+| Paneer | `https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=200&h=200&fit=crop` |
+| Corn | `https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=200&h=200&fit=crop` |
+| Jalapenos | `https://images.unsplash.com/photo-1525052757479-c3b5ce1fc0af?w=200&h=200&fit=crop` |
+
+---
+
+## 13. Running the Project
+
+### Step 1 — Start MongoDB
+
+```bash
+mongod
+```
+
+### Step 2 — Seed the database
+
+Open `mongosh` and run the insert commands from [Section 4](#4-database-setup-mongodb).
+
+### Step 3 — Start the Backend
+
+```bash
+cd backend
+node server.js
+# Server starts on http://localhost:7000
+```
+
+### Step 4 — Start the Frontend
+
+```bash
+cd frontend/pizzeria
+ng serve
+# App starts on http://localhost:4200
+```
+
+---
+## 13. Running the Project
+
+### Step 1 — Start MongoDB
+
+```bash
+mongod
+```
+
+### Step 2 — Seed the database
+
+Open `mongosh` and run the insert commands from [Section 4](#4-database-setup-mongodb).
+
+### Step 3 — Start the Backend
+
+```bash
+cd backend
+node server.js
+# Server starts on http://localhost:7000
+```
+
+### Step 4 — Start the Frontend
+
+```bash
+cd frontend/pizzeria
+ng serve
+# App starts on http://localhost:4200
+```
+
+---
+
+## Application Routes Summary
+
+| URL | Component | What it shows |
+|-----|-----------|---------------|
+| `/` or `/home` | HomeComponent | Landing page with hero, features, chefs, reviews |
+| `/orderpizza` | OrderpizzaComponent | Browse and add pizzas to cart with search/filter |
+| `/buildpizza` | BuildpizzaComponent | Build custom pizza by selecting ingredients |
+| `/shoppingcart` | ShoppingcartComponent | Cart review + address + payment checkout (3 steps) |
+| `/order-success` | OrderSuccessComponent | Order placed confirmation screen |
+| `/login` | LoginComponent | Login form (book-style design) |
+| `/signup` | SignupComponent | Registration form |
+| `/profile` | ProfileComponent | User profile + saved addresses |
+| `/order-history` | OrderHistoryComponent | Past orders with status tracking |
+| `/admin` | AdminPanelComponent | Admin dashboard with order management |
+
+---
+
+## Coupon Codes (Built-in)
+
+| Code | Discount |
+|------|----------|
+| `PIZZA30` | ₹100 off |
+| `SAVE10` | ₹100 off |
+| `WELCOME` | ₹100 off |
+
+---
+
+## Pricing Logic
+
+- **Subtotal** = sum of (item price × quantity)
+- **Tax** = 5% of subtotal
+- **Delivery** = ₹50 flat
+- **Total** = Subtotal + Tax + Delivery − Discount
+
+---
+
+*This document was created to enable a complete rebuild of the Pizzeria project from scratch.*
+The file PIZZERIA_REBUILD GUIDE.md has been created at the root of your project. Here's everything it includes:
+
+13 sections covering 100% of the project:
+
+1. Tech Stack-Angular 16, Express, MongoDB, Bootstrap 5, Font Awesome
+
+2. Prerequisites-Node.js, MongoDB, Angular CLI 16
+
+3. Project Structure - Complete folder/file tree
+
+*C+
+
+4. Database Setup - MongoDB pizzeria DB with full mongosh insert scripts for all 8 pizzas and 10 ingredients (with exact image URLs)
+
+5. Backend Setup Exact package.json + full /save-order,/orders/user/userld)
+
+Copy
+
+s./ingredients. /signup/login
+
+Copy All
+
+mponents/services
+
+6. Frontend Setup - Exact package.json + all ng
+
+Copy Final Response
+
+7. All Backend Source Files - Complete server.js
+
+New Chat
+
+Ctrl+N
+
+8. Frontend Core Files
+
+index.html,main.ts,
+
+αμμικών
+
+upp nodule.tsapp.component.
+
+AdminPanel
+
+9. All Components-Full.ts+.html for Home, Navbar, Login, Signup, OrderPizza, BuildPizza, OrderSuccess, Profile, OrderHistory,
+
+Codes (Built-in)
+
+Discount |
+
+30 ₹100 off |
+
+100 off |
+
+ME 100 off |
+
+10. All Services fetchdata.service.ts, session.service.ts, shopping-cart.service.ts
+
+11. All CSS-Global styles.css + component-level CSS for all components
+
+sum.pipe.ts
+
+12. All Image URLs - Every Unsplash URL for pizzas, ingredients, chefs, story section
+
+13. Run Commands-Step-by-step to start MongoDB seed DB-start backend start frontend, plus coupon codes and pricing logic

@@ -1,0 +1,42 @@
+<div class="container mt-4 mb-4">
+  <div class="text-center mb-4">
+    <h5 class="text-primary mb-2">🍕 Build Your Custom Pizza</h5>
+    <p class="text-muted">Select your favorite toppings and create your perfect pizza</p>
+  </div>
+
+  <p class="text-center text-danger fw-bold" *ngIf="notFetched">Could Not Fetch Data</p>
+
+  <div class="ingredients-grid mb-5">
+    <div class="ingredient-card" *ngFor="let bp of customPizzaData" [class.selected]="bp.checked"
+      (click)="toggleIngredient(bp)">
+      <div class="card-image">
+        <img [src]="bp.image" [alt]="bp.tname" class="img-fluid">
+      </div>
+      <div class="card-info">
+        <div class="card-name">{{ bp.tname }}</div>
+        <div class="card-price">+&#8377;{{ bp.price }}</div>
+      </div>
+      <div class="card-checkbox">
+        <div class="checkbox-icon" [class.checked]="bp.checked">
+          <i class="fas" [ngClass]="bp.checked ? 'fa-check-circle' : 'fa-circle'"></i>
+        </div>
+        <span class="badge-text" *ngIf="bp.checked">Added</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="total-section mt-5 text-center">
+    <div class="total-box d-inline-block">
+      <div class="total-label">Your Pizza Total</div>
+      <div class="total-amount">&#8377;<span>{{ cost }}</span></div>
+    </div>
+  </div>
+
+  <div class="build-action mt-4 text-center">
+    <button class="btn-build-pizza" [disabled]="checkedIngredients.length === 0" (click)="sendIngredients()">
+      <i class="fas fa-pizza-slice"></i>
+      <span>Add to Cart</span>
+    </button>
+    <p class="text-muted mt-2 small" *ngIf="checkedIngredients.length === 0">Select at least one topping to continue</p>
+  </div>
+</div>

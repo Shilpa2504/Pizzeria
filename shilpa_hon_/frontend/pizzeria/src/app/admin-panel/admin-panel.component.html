@@ -1,0 +1,84 @@
+<div class="container section-padding">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Admin Panel</h2>
+    <button class="btn btn-outline-primary btn-sm" (click)="refresh()">
+      <i class="fas fa-sync"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <i class="fas fa-shopping-bag fa-2x text-primary mb-2"></i>
+        <h4>{{ dashboardStats.totalOrders || orders.length }}</h4>
+        <small class="text-muted">Total Orders</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <i class="fas fa-users fa-2x text-success mb-2"></i>
+        <h4>{{ dashboardStats.totalUsers || '-' }}</h4>
+        <small class="text-muted">Total Users</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <i class="fas fa-pizza-slice fa-2x text-warning mb-2"></i>
+        <h4>{{ dashboardStats.totalPizzas || '-' }}</h4>
+        <small class="text-muted">Menu Items</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <i class="fas fa-rupee-sign fa-2x text-danger mb-2"></i>
+        <h4>&#8377;{{ getTotalRevenue() }}</h4>
+        <small class="text-muted">Revenue (Delivered)</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <!-- Filter -->
+  <div class="mb-3">
+    <select class="form-select w-auto" [(ngModel)]="statusFilter" (change)="applyFilters()">
+      <option value="all">All Orders</option>
+      <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+    </select>
+  </div>
+
+  <div class="text-center py-4" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div class="card mb-3" *ngFor="let order of filteredOrders">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <h6 class="mb-0">Order #{{ order._id?.slice(-8) | uppercase }}</h6>
+          <small class="text-muted">{{ formatDate(order.createdAt) }} &bull; User: {{ order.userId }}</small>
+        </div>
+        <span class="badge bg-{{ getStatusColor(order.status) }}">{{ order.status | titlecase }}</span>
+      </div>
+      <div class="mb-2">
+        <small class="text-muted" *ngFor="let item of order.items">
+          {{ item.name }} x{{ item.quantity }} &nbsp;
+        </small>
+      </div>
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="fw-bold" style="color:#E85D04;">&#8377;{{ order.totalAmount }}</span>
+        <select class="form-select form-select-sm w-auto" [value]="order.status"
+          (change)="updateOrderStatus(order._id, $any($event.target).value)" [disabled]="updatingOrderId === order._id">
+          <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-info text-center" *ngIf="!isLoading && filteredOrders.length === 0">
+    No orders found.
+  </div>
+</div>

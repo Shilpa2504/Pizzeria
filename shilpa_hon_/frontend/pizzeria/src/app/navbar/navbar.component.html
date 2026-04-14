@@ -1,0 +1,60 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="home" (click)="closeMenu()">
+      <i class="fas fa-pizza-slice"></i> Pizzeria
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="home" routerLinkActive="active" (click)="closeMenu()">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="orderpizza" routerLinkActive="active" (click)="closeMenu()">Order Pizza</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="buildpizza" routerLinkActive="active" (click)="closeMenu()">Build Your
+            Pizza</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link position-relative" routerLink="shoppingcart" routerLinkActive="active"
+            (click)="closeMenu()">
+            <i class="fas fa-shopping-cart"></i> Cart
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              *ngIf="((cartCount$ | async) ?? 0) > 0">
+              {{ cartCount$ | async }}
+            </span>
+          </a>
+        </li>
+
+        <li class="nav-item position-relative" *ngIf="isLoggedIn">
+          <button class="nav-link user-menu-btn" (click)="toggleMenu()" type="button">
+            <i class="fas fa-user-circle"></i> {{ userName }}
+          </button>
+          <div class="user-dropdown-menu" *ngIf="menuOpen">
+            <a class="dropdown-item-custom" routerLink="profile" (click)="closeMenu()">
+              <i class="fas fa-user"></i> Profile
+            </a>
+            <a class="dropdown-item-custom" routerLink="order-history" (click)="closeMenu()">
+              <i class="fas fa-history"></i> Order History
+            </a>
+            <hr class="dropdown-divider-custom">
+            <a class="dropdown-item-custom logout-btn" (click)="logout()">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+          </div>
+        </li>
+
+        <li class="nav-item" *ngIf="!isLoggedIn">
+          <a class="btn btn-primary nav-link" routerLink="/login" (click)="closeMenu()">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
