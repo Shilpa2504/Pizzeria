@@ -1,7 +1,7 @@
 // Run this once to seed the database: node seed.js
 const { MongoClient } = require('mongodb');
 
-const url = 'mongodb://127.0.0.1:27017';
+const url = 'mongodb+srv://shilpa:root@cluster0.vcwlcow.mongodb.net/pizzeria?appName=Cluster0';
 const dbName = 'pizzeria';
 
 async function seed() {

@@ -5,7 +5,7 @@ let bodyparser = require("body-parser");
 let app = express();
 let mongoclient = mongodb.MongoClient;
 app.use(cors());
-let url = "mongodb://127.0.0.1:27017";
+let url = process.env.MONGO_URL || "mongodb+srv://shilpa:root@cluster0.vcwlcow.mongodb.net/pizzeria?appName=Cluster0";
 let dbName = "pizzeria";
 
 app.use(bodyparser.json());
@@ -241,6 +241,6 @@ app.get('/admin/stats', (req, res) => {
     });
 });
 
-app.listen(7000, () => {
-    console.log("Express Server running on port 7000..");
+app.listen(process.env.PORT || 7000, () => {
+    console.log("Express Server running..");
 });

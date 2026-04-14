@@ -75,10 +75,12 @@ export interface OrderItem {
   customizations?: string[];
 }
 
+import { environment } from '../environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class FetchdataService {
 
-  private readonly apiUrl = 'http://localhost:7000';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private readonly http: HttpClient) { }
 
