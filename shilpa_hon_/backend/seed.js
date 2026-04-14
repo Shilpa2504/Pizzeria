@@ -1,7 +1,8 @@
 // Run this once to seed the database: node seed.js
+require('dotenv').config();
 const { MongoClient } = require('mongodb');
 
-const url = 'mongodb+srv://shilpa:root@cluster0.vcwlcow.mongodb.net/pizzeria?appName=Cluster0';
+const url = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017';
 const dbName = 'pizzeria';
 
 async function seed() {

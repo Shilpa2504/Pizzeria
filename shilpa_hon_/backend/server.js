@@ -2,10 +2,11 @@ let express = require('express');
 let mongodb = require('mongodb');
 let cors = require('cors');
 let bodyparser = require("body-parser");
+require('dotenv').config();
 let app = express();
 let mongoclient = mongodb.MongoClient;
 app.use(cors());
-let url = process.env.MONGO_URL || "mongodb+srv://shilpa:root@cluster0.vcwlcow.mongodb.net/pizzeria?appName=Cluster0";
+let url = process.env.MONGO_URL || "mongodb://127.0.0.1:27017";
 let dbName = "pizzeria";
 
 app.use(bodyparser.json());

@@ -1,0 +1,167 @@
+%-----------------------------------------------------------------------------------------------------------------------------------------------%
+%	The MIT License (MIT)
+%
+%	Copyright (c) 2021 Jitin Nair
+%
+%	Permission is hereby granted, free of charge, to any person obtaining a copy
+%	of this software and associated documentation files (the "Software"), to deal
+%	in the Software without restriction, including without limitation the rights
+%	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%	copies of the Software, and to permit persons to whom the Software is
+%	furnished to do so, subject to the following conditions:
+%	
+%	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%	THE SOFTWARE.
+%	
+%-----------------------------------------------------------------------------------------------------------------------------------------------%
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT DEFINITION
+%----------------------------------------------------------------------------------------
+
+\documentclass[a4paper,11pt]{article}
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES
+%----------------------------------------------------------------------------------------
+\usepackage{url}
+\usepackage{parskip}
+\RequirePackage{color}
+\RequirePackage{graphicx}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[top=1.4cm,bottom=0.8cm,left=1.2cm,right=1.2cm]{geometry}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\usepackage{supertabular}
+\usepackage{tabularx}
+\newlength{\fullcollw}
+\setlength{\fullcollw}{0.47\textwidth}
+\usepackage{titlesec}
+\usepackage{multicol}
+\usepackage{multirow}
+\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{6pt}{6pt}
+\usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
+\usepackage[unicode, draft=false]{hyperref}
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
+\addbibresource{citations.bib}
+\setlength\bibitemsep{1em}
+\usepackage{fontawesome5}
+
+%----------------------------------------------------------------------------------------
+%	BEGIN DOCUMENT
+%----------------------------------------------------------------------------------------
+\begin{document}
+\pagestyle{empty}
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+\noindent\begin{tabularx}{\linewidth}{@{} X @{}}
+\Huge{Shilpa Gupta} \\[7.5pt]
+\href{https://myportfolio-d378f.firebaseapp.com/}{\raisebox{-0.05\height}{\faLink} Shilpa.Portfolio} \ $|$ \
+\href{https://github.com/Shilpa2504}{\raisebox{-0.05\height}{\faGithub} Shilpa2504} \ $|$ \
+\href{https://www.linkedin.com/in/shilpa-gupta-621a90259/}{\raisebox{-0.05\height}{\faLinkedin} Shilpa Gupta} \\
+\href{https://leetcode.com/Shilpa_gupta/}{\raisebox{-0.05\height} Leetcode} \ $|$ \
+\href{mailto:shilpakalwar25@gmail.com}{\raisebox{-0.05\height} shilpakalwar25@gmail.com} \ $|$ \
+\href{tel:7338683445}{\raisebox{-0.05\height} 7338683445}
+\end{tabularx}
+
+%----------------------------------------------------------------------------------------
+%	EXPERIENCE
+%----------------------------------------------------------------------------------------
+\section{Work Experience}
+
+\begin{tabularx}{\linewidth}{@{}l r@{}}
+\textbf{Accenture -- Packaged App Development Associate (PADA)} & Nov 2024 -- Present \\[2pt]
+\multicolumn{2}{@{}X@{}}{$\bullet$ 1+ year experience developing enterprise Angular (17+) web applications on the MyISP platform.} \\
+\multicolumn{2}{@{}X@{}}{$\bullet$ Implemented Micro Frontend (MFE) architecture, RxJS-based data flows, pagination, and NgRx state management using reusable UI components.} \\
+\multicolumn{2}{@{}X@{}}{$\bullet$ Migrated applications to Angular 17+, improving performance, scalability, and maintainability by 25\%.} \\
+\multicolumn{2}{@{}X@{}}{$\bullet$ Integrated REST APIs, handled CRUD operations, and worked in Agile/Scrum teams.} \\
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{@{}l r@{}}
+\textbf{FindInbox -- Web Developer Intern} & Nov 2023 -- Jan 2024 \\[2pt]
+\multicolumn{2}{@{}X@{}}{{\small\bfseries A startup focused on educational technology solutions}} \\
+\multicolumn{2}{@{}X@{}}{$\bullet$ Developed React.js web application using functional components, hooks, and component-based architecture.} \\
+\multicolumn{2}{@{}X@{}}{$\bullet$ Integrated REST APIs and implemented state management for student assessment data.} \\
+\multicolumn{2}{@{}X@{}}{$\bullet$ Built performance analytics features, improving UI responsiveness and usability by 20\%.} \\
+\end{tabularx}
+
+%----------------------------------------------------------------------------------------
+%	PROJECTS
+%----------------------------------------------------------------------------------------
+\section{Projects}
+
+\begin{tabularx}{\linewidth}{@{}X@{}}
+\textbf{StudyMate.ai -- AI-Powered Study Assistant (React.js, Node.js, MongoDB, AI APIs)} \ $|$ \
+\href{https://github.com/Shilpa2504}{ GitHub} \ $|$ \
+\href{https://study-mate-ai-six.vercel.app/login}{ Live} \\[2pt]
+{$\bullet$ Built an AI-powered study companion enabling users to upload PDFs, ask context-aware questions, and generate quizzes using AI APIs.} \\
+{$\bullet$ Developed interactive quiz generation and analytics dashboard to track learning progress and performance metrics.} \\
+{$\bullet$ Implemented secure user authentication, session management, and responsive UI using React.js and component-based architecture.} \\
+{$\bullet$ Integrated REST APIs and MongoDB for efficient document storage, user data, and quiz result management.} \\
+{$\bullet$ Deployed on Vercel with optimized build pipeline, achieving fast load times and high availability.} \\
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{@{}l r@{}}
+\textbf{PizzeriaApp -- MEAN Stack (Angular, MongoDB, Express.js, Node.js)} \ $|$ \
+\href{https://github.com/Shilpa2504/Pizzeria}{ GitHub} \ $|$ \
+\href{https://pizzeria-ashen-alpha.vercel.app/}{ Live} \\[2pt]
+\multicolumn{2}{@{}X@{}}{$\bullet$ Developed full-stack MEAN web application with dynamic pizza customization, cart management, and order tracking.} \\
+\multicolumn{2}{@{}X@{}}{$\bullet$ Implemented REST APIs and CRUD operations to manage orders, users, and menu data.} \\
+\multicolumn{2}{@{}X@{}}{$\bullet$ Designed responsive Angular components using component-based architecture and reusable services.} \\
+\multicolumn{2}{@{}X@{}}{$\bullet$ Integrated MongoDB Atlas, improving data consistency and order processing efficiency by 20\%.} \\
+\end{tabularx}
+
+\begin{tabularx}{\linewidth}{@{}X@{}}
+\textbf{NewsApp -- React.js, HTML, CSS, Bootstrap} \ $|$ \
+\href{https://github.com/Shilpa2504/Newsapp.git}{ Newsapp.git} \\[2pt]
+{$\bullet$ Developed React.js web application using component-based and class-based components.} \\
+{$\bullet$ Integrated REST APIs (News API) to fetch, manage, and render real-time news data.} \\
+{$\bullet$ Implemented state handling and category-based routing, improving user engagement by 20\%.} \\
+\end{tabularx}
+
+%----------------------------------------------------------------------------------------
+%	SKILLS
+%----------------------------------------------------------------------------------------
+\section{Skills}
+\begin{tabularx}{\linewidth}{@{}X@{}}
+\textbf{Frontend:} Angular (17+), React.js, JavaScript (ES6+), HTML5, CSS3, Bootstrap \\
+\textbf{Backend \& Databases:} Node.js, Express.js, REST APIs, CRUD, MongoDB, MySQL \\
+\textbf{AI \& Tools:} AI API Integration, PDF Processing, Git, GitHub, npm, VS Code, Linux/Unix \\
+\textbf{Concepts:} Micro Frontend (MFE), State Management, Pagination, Responsive Design, Agile/Scrum, Performance Optimization
+\end{tabularx}
+
+%----------------------------------------------------------------------------------------
+%	EDUCATION
+%----------------------------------------------------------------------------------------
+\section{Education}
+\begin{tabularx}{\linewidth}{@{}l X@{}}
+2020 - 2024 & BE in CSE at \textbf{Jss Academy of Technical Education, Bangalore} \hfill \normalsize (CGPA: 8.6) \\
+2018 &      Class 12th  Assam Board \hfill  (74\%) \\
+2016 &      Class 10th  Assam Board \hfill  (74\%) \\
+\end{tabularx}
+
+%----------------------------------------------------------------------------------------
+%	CERTIFICATIONS
+%----------------------------------------------------------------------------------------
+\section{Certification}
+\begin{tabularx}{\linewidth}{@{}l r@{}}
+\textbf{$\bullet$ The Web Developer Bootcamp 2023 by Colt Steele} \hfill (2023) \\[3pt]
+\textbf{$\bullet$ Microsoft GitHub Copilot Certification} \hfill (2024) \\[3pt]
+\href{https://www.hackerrank.com/certificates/c703269ff0d5m}{$\bullet$ HackerRank Certifications: Data Structures (Basic)} \ $|$ \
+\href{https://www.hackerrank.com/certificates/0b6cd38724b5/}{SQL}
+\end{tabularx}
+
+\vfill
+\end{document}
