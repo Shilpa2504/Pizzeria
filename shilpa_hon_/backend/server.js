@@ -20,7 +20,7 @@ app.use(function (req, res, next) {
 app.get('/pizzas', (req, res) => {
     mongoclient.connect(url, (error, conn) => {
         if (error) {
-            console.log("DB Connection Error");
+            console.log("DB Connection Error:", error.message);
             res.status(500).json({ message: "Database connection failed" });
         } else {
             console.log("DB Connectivity Successful..");
