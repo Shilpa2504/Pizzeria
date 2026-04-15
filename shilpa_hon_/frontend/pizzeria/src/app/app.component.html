@@ -1,5 +1,12 @@
-<app-navbar></app-navbar>
+<!-- Global page loader -->
+<div class="global-loader" *ngIf="isLoading">
+  <div class="loader-content">
+    <div class="pizza-spinner">🍕</div>
+    <p>Loading...</p>
+  </div>
+</div>
 
+<app-navbar></app-navbar>
 <div class="container">
   <router-outlet></router-outlet>
 </div>

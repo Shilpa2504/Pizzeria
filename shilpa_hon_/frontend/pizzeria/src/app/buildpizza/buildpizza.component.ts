@@ -21,6 +21,7 @@ export class BuildpizzaComponent {
   checkedIngredients: BuildPizza[] = [];
   cost = 0;
   notFetched = true;
+  isLoading = true;
 
   constructor(
     private readonly fd: FetchdataService,
@@ -37,9 +38,11 @@ export class BuildpizzaComponent {
           image: ing.image || ''
         }));
         this.notFetched = false;
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error fetching ingredients', error);
+        this.isLoading = false;
       }
     });
   }
