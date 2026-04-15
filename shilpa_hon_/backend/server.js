@@ -1,12 +1,13 @@
+require('dotenv').config();
 let express = require('express');
 let mongodb = require('mongodb');
 let cors = require('cors');
 let bodyparser = require("body-parser");
-require('dotenv').config();
 let app = express();
 let mongoclient = mongodb.MongoClient;
 app.use(cors());
 let url = process.env.MONGO_URL || "mongodb://127.0.0.1:27017";
+console.log("MONGO_URL:", url ? "set" : "not set");
 let dbName = "pizzeria";
 
 app.use(bodyparser.json());
