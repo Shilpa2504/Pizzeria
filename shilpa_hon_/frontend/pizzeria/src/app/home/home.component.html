@@ -1,0 +1,170 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <h1>Authentic Italian Pizza</h1>
+    <p>Handcrafted pizzas made with fresh ingredients and passion</p>
+    <div class="hero-buttons">
+      <a routerLink="/orderpizza" class="btn btn-light btn-lg me-3">
+        <i class="fas fa-shopping-bag"></i> Order Now
+      </a>
+      <a routerLink="/buildpizza" class="btn btn-outline-light btn-lg">
+        <i class="fas fa-pizza-slice"></i> Build Your Pizza
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="text-center mb-5">Why Choose Pizzeria?</h2>
+    <div class="row g-4">
+      <div class="col-md-3 col-sm-6 text-center">
+        <i class="fas fa-leaf fa-3x mb-3" style="color: #4caf50;"></i>
+        <h5>Fresh Ingredients</h5>
+        <p>Only the finest, freshest ingredients sourced locally</p>
+      </div>
+      <div class="col-md-3 col-sm-6 text-center">
+        <i class="fas fa-fire fa-3x mb-3" style="color: #ff9800;"></i>
+        <h5>Traditional Recipe</h5>
+        <p>Authentic Italian recipes passed down for generations</p>
+      </div>
+      <div class="col-md-3 col-sm-6 text-center">
+        <i class="fas fa-truck fa-3x mb-3" style="color: #2196f3;"></i>
+        <h5>Fast Delivery</h5>
+        <p>Hot, fresh pizzas delivered to your door in 45 minutes</p>
+      </div>
+      <div class="col-md-3 col-sm-6 text-center">
+        <i class="fas fa-star fa-3x mb-3" style="color: #ffc107;"></i>
+        <h5>Top Quality</h5>
+        <p>5-star rated by thousands of satisfied customers</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Story Section -->
+<section class="section-padding" style="background-color: #f9f9f9;">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <h2>Our Story</h2>
+        <p class="text-muted">We believe in creating exceptional pizza experiences. Founded with a passion for authentic
+          Italian cuisine, we've been crafting the perfect pizza for years.</p>
+        <p class="text-muted">Our commitment to quality means we use only the freshest ingredients, traditional recipes,
+          and techniques perfected over decades.</p>
+        <ul class="list-unstyled">
+          <li class="mb-3"><i class="fas fa-check-circle" style="color: #4caf50;"></i> <strong class="ms-2">Premium
+              Ingredients</strong></li>
+          <li class="mb-3"><i class="fas fa-check-circle" style="color: #4caf50;"></i> <strong class="ms-2">Expert
+              Chefs</strong></li>
+          <li class="mb-3"><i class="fas fa-check-circle" style="color: #4caf50;"></i> <strong class="ms-2">Fast
+              Delivery</strong></li>
+        </ul>
+      </div>
+      <div class="col-lg-6">
+        <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&h=500&fit=crop"
+          alt="Fresh Ingredients" class="img-fluid rounded-3" style="box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team Section -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="text-center mb-5">Meet Our Expert Chefs</h2>
+    <div class="row g-4">
+      <div class="col-md-4" *ngFor="let chef of chefs">
+        <div class="card text-center">
+          <img [src]="chef.image" class="card-img-top" [alt]="chef.name">
+          <div class="card-body">
+            <h5 class="card-title">{{ chef.name }}</h5>
+            <p class="card-text text-muted">{{ chef.specialty }}</p>
+            <p class="card-text small">{{ chef.bio }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="section-padding" style="background: linear-gradient(135deg, #f0f0f0 0%, #fafafa 100%);">
+  <div class="container">
+    <h2 class="text-center mb-5">What Our Customers Say</h2>
+    <div class="row g-4">
+      <div class="col-md-4" *ngFor="let review of reviews">
+        <div class="card border-0">
+          <div class="card-body">
+            <div class="mb-3">
+              <i class="fas fa-star text-warning" *ngFor="let i of [1,2,3,4,5]"></i>
+            </div>
+            <p class="card-text">{{ review.text }}</p>
+            <footer class="blockquote-footer mt-3">{{ review.author }}</footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Order History Section (visible only when logged in) -->
+<section class="section-padding" *ngIf="isLoggedIn" style="background-color: #fff8f0;">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">Your Recent Orders</h2>
+      <a routerLink="/order-history" class="btn btn-outline-danger btn-sm">
+        <i class="fas fa-history"></i> View All
+      </a>
+    </div>
+
+    <div class="text-center py-4" *ngIf="ordersLoading">
+      <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div class="alert alert-info text-center" *ngIf="!ordersLoading && recentOrders.length === 0">
+      <i class="fas fa-pizza-slice fa-2x mb-2"></i>
+      <p class="mb-2">No orders yet!</p>
+      <a routerLink="/orderpizza" class="btn btn-primary btn-sm">Order your first pizza</a>
+    </div>
+
+    <div class="row g-3" *ngIf="!ordersLoading && recentOrders.length > 0">
+      <div class="col-md-4" *ngFor="let order of recentOrders">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h6 class="mb-1">Order #{{ order._id?.slice(-8) | uppercase }}</h6>
+                <small class="text-muted">{{ formatDate(order.createdAt) }}</small>
+              </div>
+              <span class="badge bg-{{ getStatusClass(order.status) }}">{{ order.status | titlecase }}</span>
+            </div>
+            <div class="mb-2" *ngFor="let item of order.items">
+              <small class="text-muted">{{ item.name }} x{{ item.quantity }}</small>
+              <small class="float-end text-muted">&#8377;{{ item.price * item.quantity }}</small>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between fw-bold">
+              <span>Total</span>
+              <span style="color:#E85D04;">&#8377;{{ order.totalAmount }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section-padding" style="background: linear-gradient(135deg, #6bb6d6 0%, #a1d8ce 100%); color: white;">
+  <div class="container text-center">
+    <h2 class="text-white mb-4">Ready to Order?</h2>
+    <p class="fs-5 mb-4">Explore our full menu and place your order today!</p>
+    <a routerLink="/orderpizza" class="btn btn-light btn-lg">
+      <i class="fas fa-shopping-bag"></i> Order Now
+    </a>
+  </div>
+</section>

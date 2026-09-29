@@ -1,0 +1,19 @@
+<!-- Global page loader -->
+<div class="global-loader" *ngIf="isLoading">
+  <div class="loader-content">
+    <div class="pizza-spinner">🍕</div>
+    <p>Loading...</p>
+  </div>
+</div>
+
+<app-navbar></app-navbar>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
+
+<app-ai-widget></app-ai-widget>
+
+<footer class="page-footer">
+  <div class="footer-copyright text-center text-warning">Copyrights &copy; 2025 <i>Pizzeria &nbsp; All rights
+      reserved</i></div>
+</footer>

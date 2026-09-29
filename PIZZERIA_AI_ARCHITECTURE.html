@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pizzeria AI Integration Guide</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #1f2937;
+      --card2: #172036;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #fb923c;
+      --accent2: #f97316;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --line: rgba(255,255,255,0.08);
+      --code: #0b1220;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0, #0f172a 45%, #020617 100%);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(15,23,42,0.95));
+      border: 1px solid rgba(251,146,60,0.25);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    .eyebrow {
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+    }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.2; }
+    h1 { font-size: clamp(2rem, 4vw, 3.4rem); }
+    h2 { font-size: 1.55rem; margin-top: 0; }
+    h3 { font-size: 1.1rem; margin-top: 0; }
+    p { margin: 0 0 14px; color: var(--text); }
+    .muted { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .panel, .card {
+      background: rgba(17,24,39,0.88);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+    }
+    .span-12 { grid-column: span 12; }
+    .span-8 { grid-column: span 8; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+    .span-3 { grid-column: span 3; }
+    .span-9 { grid-column: span 9; }
+    .flow {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .flow-row {
+      display: grid;
+      grid-template-columns: 1fr 40px;
+      gap: 12px;
+      align-items: center;
+    }
+    .flow-box {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(31,41,55,1), rgba(23,32,54,1));
+      border: 1px solid rgba(251,146,60,0.12);
+    }
+    .arrow {
+      text-align: center;
+      color: var(--accent);
+      font-size: 1.4rem;
+      font-weight: 700;
+      user-select: none;
+    }
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+    }
+    .tag.good { color: #bbf7d0; border-color: rgba(34,197,94,0.35); }
+    .tag.warn { color: #fde68a; border-color: rgba(245,158,11,0.35); }
+    .tag.bad { color: #fecaca; border-color: rgba(239,68,68,0.35); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+    th {
+      color: #fff;
+      background: rgba(255,255,255,0.04);
+    }
+    td { color: var(--text); }
+    code, pre {
+      background: var(--code);
+      color: #dbeafe;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+    }
+    code {
+      padding: 2px 6px;
+      font-size: 0.94em;
+    }
+    pre {
+      padding: 14px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+    }
+    ul { margin: 8px 0 0 20px; padding: 0; }
+    li { margin-bottom: 8px; }
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: rgba(251,146,60,0.08);
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+    .callout.warn { border-left-color: var(--warn); background: rgba(245,158,11,0.08); }
+    .callout.bad { border-left-color: var(--bad); background: rgba(239,68,68,0.08); }
+    .callout.good { border-left-color: var(--good); background: rgba(34,197,94,0.08); }
+    .stack {
+      display: grid;
+      gap: 10px;
+    }
+    .small { font-size: 0.92rem; }
+    .kpi {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .kpi div {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      min-width: 170px;
+    }
+    .kpi strong { display: block; font-size: 1.05rem; }
+    .footer-note { color: var(--muted); font-size: 0.9rem; margin-top: 24px; }
+    .section-title { margin-top: 34px; }
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 900px) {
+      .span-8, .span-6, .span-4, .span-3, .span-9 { grid-column: span 12; }
+      .two-col { grid-template-columns: 1fr; }
+      .flow-row { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Pizzeria AI Integration Guide</div>
+      <h1>How the AI is actually wired in this app</h1>
+      <p class="muted">
+        This document explains the real frontend-to-backend flow, what Gemini does, what the fallback parser does,
+        where MongoDB is used, how cart updates happen, and why a broad prompt sometimes looks like a rule-based reply.
+      </p>
+      <div class="callout good">
+        For a code-level walkthrough with import-by-import and function-by-function explanations, open
+        <code>PIZZERIA_AI_CODE_WALKTHROUGH.html</code> in the workspace root.
+      </div>
+      <div class="kpi">
+        <div>
+          <strong>Primary AI path</strong>
+          <span>Angular → backend → Gemini → structured JSON</span>
+        </div>
+        <div>
+          <strong>Safety path</strong>
+          <span>Validate every item against MongoDB before adding anything</span>
+        </div>
+        <div>
+          <strong>UI pattern</strong>
+          <span>Global floating assistant widget + meal builder page</span>
+        </div>
+        <div>
+          <strong>Current environment note</strong>
+          <span>Gemini quota was rate-limited during testing, so fallback was active</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid section-title">
+      <div class="panel span-12">
+        <h2>1. The real AI flow</h2>
+        <p class="muted small">
+          The app does not parse the user request in Angular first. Angular sends the raw natural-language text to the backend.
+          The backend first tries Gemini. Only if Gemini fails, times out, returns invalid JSON, or is rate-limited does the app
+          fall back to a local parser.
+        </p>
+
+        <div class="flow">
+          <div class="flow-row">
+            <div class="flow-box">User types: “I want to eat something spicy” or “build a meal for 10 people”</div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box">Angular AI widget / Meal Builder page sends the raw text to <code>POST /api/ai/order</code></div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box">Backend calls Gemini with a system prompt, the raw user message, and a list of real menu names</div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box">Gemini returns structured JSON: intent + items + toppings + quantities</div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box">Backend validates each item against MongoDB and computes authoritative prices</div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box">Validated cart items are pushed into the existing ShoppingCartService</div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box">Cart badge, shopping cart page, and totals update from the real cart state</div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box">Angular shows the assistant response, availability, total, and a Go to Cart button only when items were actually added</div>
+            <div class="arrow">↓</div>
+          </div>
+        </div>
+
+        <div class="callout warn">
+          <strong>Important:</strong> The fallback parser is not the same thing as Gemini. If Gemini is rate-limited, the backend still works,
+          but the fallback is intentionally conservative and may not reason like a large language model. That is why a request can look
+          less intelligent when the quota is exhausted.
+        </div>
+      </div>
+
+      <div class="panel span-6">
+        <h2>2. Why conditions exist</h2>
+        <p>
+          The conditions in the backend are not replacing the AI. They are safety gates after the AI step.
+        </p>
+        <ul>
+          <li>They validate that returned item names exist in MongoDB.</li>
+          <li>They reject invented pizzas, toppings, or prices.</li>
+          <li>They keep valid items when an invalid item is also present.</li>
+          <li>They make the cart state authoritative, not the model output.</li>
+        </ul>
+        <div class="callout good small">
+          <strong>Good example:</strong> Gemini says “Chicken Tikka + Mushrooms + Coke”.<br />
+          Backend adds Chicken Tikka and Mushrooms, but marks Coke unavailable.
+        </div>
+      </div>
+
+      <div class="panel span-6">
+        <h2>3. Why “eat something spicy” can look wrong</h2>
+        <p>
+          If Gemini is available, it can infer broad intent like “I want something spicy” and turn that into structured output.
+          If Gemini is not available, the fallback parser may not have enough semantic intelligence to guess the right menu item.
+        </p>
+        <div class="callout bad small">
+          During your testing, Gemini was rate-limited, so the app was falling back more often than usual.
+        </div>
+        <p class="small muted">
+          In other words: the app architecture is AI-first, but in a quota failure it degrades to a safe parser, not a second AI model.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid section-title">
+      <div class="panel span-12">
+        <h2>4. Frontend architecture</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>What it does</th>
+              <th>AI relevance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>src/app/app.component.html</code></td>
+              <td>Global shell: navbar, router outlet, and the floating AI widget mounted once for the whole app.</td>
+              <td>Important because the assistant is not a page tab anymore; it is available on every route.</td>
+            </tr>
+            <tr>
+              <td><code>src/app/ai-widget/ai-widget.component.ts</code></td>
+              <td>Global floating chat widget with open/close state, message history, send, clear, and voice input.</td>
+              <td>Primary chat UI for natural-language ordering.</td>
+            </tr>
+            <tr>
+              <td><code>src/app/meal-builder/meal-builder.component.ts</code></td>
+              <td>Dedicated meal-builder page using the same AI pipeline and the same cart integration.</td>
+              <td>Same backend flow, different presentation.</td>
+            </tr>
+            <tr>
+              <td><code>src/app/ai-order.service.ts</code></td>
+              <td>Single HTTP client wrapper for <code>POST /api/ai/order</code>.</td>
+              <td>Sends raw user text to the backend.</td>
+            </tr>
+            <tr>
+              <td><code>src/app/ai-order-base.ts</code></td>
+              <td>Shared submit / Go to Cart / Start Over logic for AI pages.</td>
+              <td>Ensures both UIs use the same validation response shape.</td>
+            </tr>
+            <tr>
+              <td><code>src/app/shopping-cart.service.ts</code></td>
+              <td>In-memory + localStorage cart state with add, merge, remove, quantity, totals.</td>
+              <td>Final cart integration point after validation.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel span-6">
+        <h3>Global widget behavior</h3>
+        <ul>
+          <li>The assistant opens as a floating orange chat bubble in the bottom-right corner.</li>
+          <li>It stays available on every page because it is mounted in <code>app.component.html</code>.</li>
+          <li>It includes optional voice input using the browser's Web Speech API.</li>
+          <li>It keeps conversation history inside the widget so you can see the back-and-forth.</li>
+        </ul>
+      </div>
+
+      <div class="panel span-6">
+        <h3>Meal Builder page behavior</h3>
+        <ul>
+          <li>The page uses the same <code>AiOrderService</code> call as the widget.</li>
+          <li>It is better for a full-screen, guided meal-construction flow.</li>
+          <li>It still ends in the same shopping cart update path.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="grid section-title">
+      <div class="panel span-12">
+        <h2>5. Backend architecture</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>What it does</th>
+              <th>Why it matters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>backend/server.js</code></td>
+              <td>Express app bootstrap. Registers the AI route and the existing CRUD routes.</td>
+              <td>Owns the HTTP surface of the app.</td>
+            </tr>
+            <tr>
+              <td><code>backend/routes/ai.js</code></td>
+              <td>Implements <code>POST /api/ai/order</code>.</td>
+              <td>Orchestrates Gemini, fallback parsing, MongoDB validation, and response formatting.</td>
+            </tr>
+            <tr>
+              <td><code>backend/services/geminiService.js</code></td>
+              <td>Calls Gemini with the system prompt, schema, timeout, and quota cooldown.</td>
+              <td>Primary natural-language understanding step.</td>
+            </tr>
+            <tr>
+              <td><code>backend/services/fallbackParser.js</code></td>
+              <td>Deterministic parser used only when Gemini fails or is rate-limited.</td>
+              <td>Safety net, not the primary AI.</td>
+            </tr>
+            <tr>
+              <td><code>backend/services/menuMatcher.js</code></td>
+              <td>Matches user language to real pizza/topping names, including typo tolerance.</td>
+              <td>Stops invented products and improves matching for fuzzy text.</td>
+            </tr>
+            <tr>
+              <td><code>backend/services/orderValidation.js</code></td>
+              <td>Validates every returned item against MongoDB and calculates authoritative totals.</td>
+              <td>Source of truth for menu existence and pricing.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel span-6">
+        <h3>What MongoDB stores</h3>
+        <ul>
+          <li><code>pizzas</code> collection: name, price, description, image, type, rating.</li>
+          <li><code>ingredients</code> collection: topping/ingredient name, price, image.</li>
+          <li><code>users</code> collection: login and profile data.</li>
+          <li><code>orders</code> collection: saved completed orders.</li>
+        </ul>
+      </div>
+
+      <div class="panel span-6">
+        <h3>Why MongoDB validation is mandatory</h3>
+        <ul>
+          <li>Gemini can understand language, but it is not the source of truth for the menu.</li>
+          <li>The backend must stop invented items from entering the cart.</li>
+          <li>Prices must come from MongoDB, not the model.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="grid section-title">
+      <div class="panel span-12">
+        <h2>6. API map</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Used by</th>
+              <th>What it does</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GET</td>
+              <td><code>/pizzas</code></td>
+              <td>Order pizza page</td>
+              <td>Loads menu pizzas from MongoDB.</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td><code>/ingredients</code></td>
+              <td>Build pizza page</td>
+              <td>Loads toppings/ingredients from MongoDB.</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td><code>/api/ai/order</code></td>
+              <td>AI widget and Meal Builder</td>
+              <td>Runs Gemini → fallback → validation → cart-ready response.</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td><code>/signup</code></td>
+              <td>Signup page</td>
+              <td>Creates a user.</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td><code>/login</code></td>
+              <td>Login page</td>
+              <td>Authenticates a user.</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td><code>/save-order</code></td>
+              <td>Shopping cart / place order</td>
+              <td>Saves the final order record.</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td><code>/orders/user/:userId</code></td>
+              <td>Order history page</td>
+              <td>Loads a user’s order history.</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td><code>/orders</code></td>
+              <td>Admin panel</td>
+              <td>Loads all orders.</td>
+            </tr>
+            <tr>
+              <td>PUT</td>
+              <td><code>/orders/:orderId/status</code></td>
+              <td>Admin panel</td>
+              <td>Updates order status.</td>
+            </tr>
+            <tr>
+              <td>GET / PUT</td>
+              <td><code>/users/:userId</code></td>
+              <td>Profile page</td>
+              <td>Loads and updates profile.</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td><code>/admin/stats</code></td>
+              <td>Admin panel</td>
+              <td>Returns counts for orders, users, and pizzas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid section-title">
+      <div class="panel span-12">
+        <h2>7. What the AI response means</h2>
+        <p>
+          The backend returns a structured response that the frontend can render directly. The important fields are:
+        </p>
+        <pre>{
+  "success": true,
+  "usedFallback": false,
+  "intent": "ADD_TO_CART",
+  "availableItems": [],
+  "unavailableItems": [],
+  "cartItems": [],
+  "total": 0,
+  "anyAdded": false,
+  "message": ""
+}</pre>
+        <div class="two-col" style="margin-top: 16px;">
+          <div class="card">
+            <h3>availableItems</h3>
+            <p class="small muted">Validated items that can be added to the cart, with toppings and quantities preserved.</p>
+          </div>
+          <div class="card">
+            <h3>unavailableItems</h3>
+            <p class="small muted">Requested items that were not found in MongoDB or could not be used.</p>
+          </div>
+          <div class="card">
+            <h3>cartItems</h3>
+            <p class="small muted">The exact line items the frontend pushes into the existing cart service.</p>
+          </div>
+          <div class="card">
+            <h3>anyAdded</h3>
+            <p class="small muted">Controls whether the UI shows Go to Cart and whether the cart state changed.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid section-title">
+      <div class="panel span-12">
+        <h2>8. Why the assistant previously looked inaccurate</h2>
+        <div class="stack">
+          <div class="callout bad">
+            <strong>Cause 1: Gemini quota exhaustion</strong><br />
+            When the API returned HTTP 429, the backend fell back to the local parser. That parser is safe, but it is not a full LLM.
+          </div>
+          <div class="callout bad">
+            <strong>Cause 2: Conservative fallback</strong><br />
+            The fallback parser used to understand only a few exact phrases. Broad prompts like “eat something spicy” could end up as an unmatchable literal request.
+          </div>
+          <div class="callout good">
+            <strong>What was improved</strong><br />
+            We added broader filler-word stripping, fuzzy matching, custom-pizza handling, and people-count reasoning so the fallback behaves much closer to a human-facing assistant.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid section-title">
+      <div class="panel span-12">
+        <h2>9. Dependency map</h2>
+        <div class="two-col">
+          <div>
+            <h3>Backend direct dependencies</h3>
+            <ul>
+              <li><code>express</code> – HTTP server.</li>
+              <li><code>mongodb</code> – database client and collections.</li>
+              <li><code>cors</code> – cross-origin access.</li>
+              <li><code>body-parser</code> – JSON body parsing.</li>
+              <li><code>dotenv</code> – loads <code>.env</code> for the Gemini key and Mongo URL.</li>
+              <li><code>mongoose</code> / <code>nodemon</code> – present in package but not central to the AI flow.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Frontend direct dependencies</h3>
+            <ul>
+              <li><code>@angular/core</code>, <code>@angular/router</code>, <code>@angular/forms</code>, <code>@angular/common/http</code>.</li>
+              <li><code>rxjs</code> for async cart and HTTP observables.</li>
+              <li><code>bootstrap</code> and Font Awesome for styling and icons.</li>
+              <li>The browser’s built-in Web Speech API for voice input when available.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid section-title">
+      <div class="panel span-12">
+        <h2>10. End-to-end examples</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Prompt</th>
+              <th>What Gemini / fallback should infer</th>
+              <th>What backend does</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>I want something spicy</td>
+              <td>Preference-based request, likely a spicy pizza recommendation.</td>
+              <td>Gemini tries to infer intent; fallback is conservative if Gemini is unavailable.</td>
+            </tr>
+            <tr>
+              <td>Build a meal for 10 people</td>
+              <td>Group-size request, choose a recommended pizza and quantity.</td>
+              <td>Quantity becomes <code>ceil(10/3)=4</code>; one recommended pizza is selected.</td>
+            </tr>
+            <tr>
+              <td>Make a pizza with only tomato and jalapenos</td>
+              <td>Custom pizza built from toppings only.</td>
+              <td>Validated as a custom pizza and priced from topping prices.</td>
+            </tr>
+            <tr>
+              <td>Add Chicken Tikka with mushrooms and Coke</td>
+              <td>Pizza plus toppings plus an unavailable item.</td>
+              <td>Valid items are added; Coke is reported unavailable.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid section-title">
+      <div class="panel span-12">
+        <h2>11. The short version</h2>
+        <div class="callout good">
+          <strong>Yes, AI is used.</strong> The user message is sent to Gemini first. The frontend does not decide the menu item.
+          The backend only validates the result against MongoDB and computes prices. If Gemini is unavailable, the app uses a
+          conservative fallback parser so it still works, but that fallback is not equivalent to an LLM.
+        </div>
+        <p class="footer-note">
+          If you want the fallback to behave more like a true conversational model when Gemini is rate-limited, the next step would be
+          to either improve the fallback with more semantic rules or replace it with a second model-backed provider. The current app,
+          however, is already wired correctly as AI-first with backend validation.
+        </p>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

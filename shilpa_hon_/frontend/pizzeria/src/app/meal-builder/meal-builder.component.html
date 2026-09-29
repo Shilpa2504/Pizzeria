@@ -1,0 +1,74 @@
+<div class="container mt-4 mb-4">
+  <div class="text-center mb-4">
+    <h5 class="text-primary mb-2">🍽️ Tell us what you're looking for</h5>
+    <p class="text-muted">Describe your meal in plain language and we'll build it from our real menu</p>
+  </div>
+
+  <div class="ai-panel mx-auto">
+    <label for="mealBuilderInput" class="form-label fw-semibold">Describe your meal</label>
+    <textarea
+      id="mealBuilderInput"
+      class="form-control"
+      rows="3"
+      [(ngModel)]="userText"
+      (keydown.enter)="$event.preventDefault(); submit()"
+      placeholder='e.g. "Build me a meal with Chicken Tikka, extra cheese and mushrooms"'
+      [disabled]="isLoading"
+      aria-describedby="mealBuilderHint"></textarea>
+    <div id="mealBuilderHint" class="form-text">Press Enter or use the button below to build your meal.</div>
+
+    <div class="d-flex gap-2 mt-3">
+      <button type="button" class="btn-ai-submit" [disabled]="!userText.trim() || isLoading" (click)="submit()">
+        <span class="spinner-border spinner-border-sm me-2" *ngIf="isLoading" role="status" aria-hidden="true"></span>
+        <i class="fas fa-utensils" *ngIf="!isLoading"></i>
+        <span>{{ isLoading ? 'Building...' : 'Build My Meal' }}</span>
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="startOver()" *ngIf="response || errorMessage">
+        Start Over
+      </button>
+    </div>
+
+    <div class="alert alert-danger mt-3" role="alert" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="ai-result mt-4" *ngIf="response" aria-live="polite">
+      <p class="fw-semibold" [class.text-success]="response.anyAdded" [class.text-danger]="!response.anyAdded">
+        {{ response.message }}
+      </p>
+
+      <div *ngIf="response.availableItems.length" class="mb-3">
+        <h6 class="text-muted">Your meal</h6>
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-start" *ngFor="let item of response.availableItems">
+            <div>
+              <strong>{{ item.quantity }}x {{ item.name }}</strong>
+              <div class="small text-muted" *ngIf="item.toppings.length">
+                + {{ toppingNames(item) }}
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="response.unavailableItems.length" class="mb-3">
+        <h6 class="text-muted">Not available</h6>
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let item of response.unavailableItems">
+            <span class="text-danger">{{ item.name }}</span> - {{ item.reason }}
+            <div class="small text-muted" *ngIf="item.suggestions?.length">
+              Did you mean: {{ item.suggestions?.join(', ') }}?
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="response.anyAdded" class="mt-2 fw-bold">Meal total: &#8377;{{ response.total }}</div>
+
+      <button type="button" class="btn-ai-submit mt-3" *ngIf="response.anyAdded" (click)="goToCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Go to Cart</span>
+      </button>
+    </div>
+  </div>
+</div>

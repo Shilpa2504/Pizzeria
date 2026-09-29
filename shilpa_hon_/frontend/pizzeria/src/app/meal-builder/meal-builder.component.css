@@ -1,0 +1,39 @@
+:host {
+  --primary-orange: #E85D04;
+  --hover-orange: #D9480F;
+  --border-color: #E9D8C8;
+}
+
+.ai-panel {
+  max-width: 720px;
+  background: white;
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.btn-ai-submit {
+  background: var(--primary-orange);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s ease;
+}
+
+.btn-ai-submit:hover:not(:disabled) {
+  background: var(--hover-orange);
+}
+
+.btn-ai-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-result .list-group-item {
+  border-color: var(--border-color);
+}

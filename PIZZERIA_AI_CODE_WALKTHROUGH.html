@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pizzeria AI Code Walkthrough</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0f172a;
+      --card: #111827;
+      --card2: #172036;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #fb923c;
+      --accent2: #f97316;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --line: rgba(255,255,255,0.08);
+      --code: #0b1220;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0, #0f172a 50%, #020617 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: #fde68a; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 20px 72px;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(249,115,22,0.18), rgba(15,23,42,0.97));
+      border: 1px solid rgba(251,146,60,0.25);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    }
+    .eyebrow {
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+    }
+    h1, h2, h3, h4 { margin: 0 0 12px; line-height: 1.18; }
+    h1 { font-size: clamp(2rem, 4vw, 3.5rem); }
+    h2 { font-size: 1.55rem; }
+    h3 { font-size: 1.12rem; }
+    h4 { font-size: 1rem; }
+    p { margin: 0 0 14px; }
+    .muted { color: var(--muted); }
+    .small { font-size: 0.92rem; }
+    .micro { font-size: 0.86rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .panel, .card {
+      background: rgba(17,24,39,0.88);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+    }
+    .span-12 { grid-column: span 12; }
+    .span-8 { grid-column: span 8; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+    .span-3 { grid-column: span 3; }
+    .span-9 { grid-column: span 9; }
+    .span-5 { grid-column: span 5; }
+    .span-7 { grid-column: span 7; }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .nav a {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    .nav a:hover { background: rgba(255,255,255,0.08); text-decoration: none; }
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: rgba(251,146,60,0.08);
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+    .callout.good { border-left-color: var(--good); background: rgba(34,197,94,0.08); }
+    .callout.warn { border-left-color: var(--warn); background: rgba(245,158,11,0.08); }
+    .callout.bad { border-left-color: var(--bad); background: rgba(239,68,68,0.08); }
+    .stack { display: grid; gap: 12px; }
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+    }
+    .tag.good { color: #bbf7d0; border-color: rgba(34,197,94,0.35); }
+    .tag.warn { color: #fde68a; border-color: rgba(245,158,11,0.35); }
+    .tag.bad { color: #fecaca; border-color: rgba(239,68,68,0.35); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+    th {
+      color: #fff;
+      background: rgba(255,255,255,0.04);
+      position: sticky;
+      top: 0;
+    }
+    td { color: var(--text); }
+    code, pre {
+      background: var(--code);
+      color: #dbeafe;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+    }
+    code {
+      padding: 2px 6px;
+      font-size: 0.94em;
+      word-break: break-word;
+    }
+    pre {
+      padding: 14px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+    }
+    ul { margin: 8px 0 0 20px; padding: 0; }
+    li { margin-bottom: 8px; }
+    details {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-top: 12px;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #fff;
+    }
+    summary::-webkit-details-marker { color: var(--accent); }
+    .kpi {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .kpi div {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      min-width: 180px;
+    }
+    .kpi strong { display: block; font-size: 1.05rem; }
+    .flow {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .flow-row {
+      display: grid;
+      grid-template-columns: 1fr 40px;
+      gap: 12px;
+      align-items: center;
+    }
+    .flow-box {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(31,41,55,1), rgba(23,32,54,1));
+      border: 1px solid rgba(251,146,60,0.12);
+    }
+    .arrow {
+      text-align: center;
+      color: var(--accent);
+      font-size: 1.4rem;
+      font-weight: 700;
+      user-select: none;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .section { margin-top: 34px; }
+    .footer-note { color: var(--muted); font-size: 0.9rem; margin-top: 20px; }
+    @media (max-width: 900px) {
+      .span-12, .span-8, .span-6, .span-4, .span-3, .span-9, .span-5, .span-7 { grid-column: span 12; }
+      .two-col, .mini-grid { grid-template-columns: 1fr; }
+      .flow-row { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Pizzeria AI Code Walkthrough</div>
+      <h1>Detailed explanation of how the AI is integrated</h1>
+      <p class="muted">
+        This document is meant to be read like a code walkthrough. It explains the imports, the service functions,
+        the route, the frontend components, the API calls, the cart integration, and the reason broad prompts only
+        looked weak when the primary model was quota-limited.
+      </p>
+      <div class="kpi">
+        <div><strong>Primary AI</strong><span>Gemini parses raw user text into structured JSON.</span></div>
+        <div><strong>Secondary AI</strong><span>A second Gemini model is tried before local fallback.</span></div>
+        <div><strong>Fallback</strong><span>Only used after both model-backed paths fail.</span></div>
+        <div><strong>Source of truth</strong><span>MongoDB decides availability and prices.</span></div>
+      </div>
+      <div class="nav">
+        <a href="#overview">Overview</a>
+        <a href="#backend">Backend</a>
+        <a href="#frontend">Frontend</a>
+        <a href="#apis">API map</a>
+        <a href="#flow">Request flow</a>
+        <a href="#code">Code-by-code</a>
+      </div>
+    </section>
+
+    <section class="grid section" id="overview">
+      <div class="panel span-12">
+        <h2>1. What is AI in this app?</h2>
+        <p>
+          The AI is not in Angular. Angular only collects the user prompt and sends it to the backend.
+          The backend is where the AI lives. It first tries Gemini, then a second Gemini model, and only then
+          a local parser. That is why the app can still function if the model API fails, but broad prompts can
+          look less intelligent in that degraded mode.
+        </p>
+        <div class="callout warn">
+          <strong>Important correction:</strong> a request like “I want something spicy” should be handled by Gemini when the model is available.
+          If you see a literal response, that usually means the model was rate-limited and the app had to rely on the local fallback path.
+        </div>
+        <div class="callout good">
+          <strong>What was added recently:</strong> a second model-backed AI path that is more forgiving than the primary model and can interpret vague requests before the app falls back to the local parser.
+        </div>
+      </div>
+    </section>
+
+    <section class="grid section" id="flow">
+      <div class="panel span-12">
+        <h2>2. End-to-end flow</h2>
+        <div class="flow">
+          <div class="flow-row"><div class="flow-box">User enters natural language in the assistant widget or Meal Builder page.</div><div class="arrow">↓</div></div>
+          <div class="flow-row"><div class="flow-box">Angular sends the raw text to <code>POST /api/ai/order</code> using <code>AiOrderService</code>.</div><div class="arrow">↓</div></div>
+          <div class="flow-row"><div class="flow-box">Backend loads real menu data from MongoDB (<code>pizzas</code> and <code>ingredients</code> collections).</div><div class="arrow">↓</div></div>
+          <div class="flow-row"><div class="flow-box">Primary Gemini model parses the request into intent + items + toppings + quantities.</div><div class="arrow">↓</div></div>
+          <div class="flow-row"><div class="flow-box">If primary Gemini fails, a secondary Gemini model is tried.</div><div class="arrow">↓</div></div>
+          <div class="flow-row"><div class="flow-box">If both model-backed paths fail, the local fallback parser runs.</div><div class="arrow">↓</div></div>
+          <div class="flow-row"><div class="flow-box">Backend validates every returned item against MongoDB and calculates the final price.</div><div class="arrow">↓</div></div>
+          <div class="flow-row"><div class="flow-box">Validated cart items are pushed into <code>ShoppingCartService</code>.</div><div class="arrow">↓</div></div>
+          <div class="flow-row"><div class="flow-box">The cart badge, cart page, totals, and order flow update from the real cart state.</div><div class="arrow">↓</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid section" id="backend">
+      <div class="panel span-12">
+        <h2>3. Backend overview</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Role</th>
+              <th>Why it matters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>backend/server.js</code></td>
+              <td>Main Express bootstrap and route registration.</td>
+              <td>Creates the HTTP server and wires the AI route with the existing pizza/order APIs.</td>
+            </tr>
+            <tr>
+              <td><code>backend/routes/ai.js</code></td>
+              <td>Single AI ordering endpoint.</td>
+              <td>Coordinates Gemini primary, Gemini secondary, fallback parsing, and validation.</td>
+            </tr>
+            <tr>
+              <td><code>backend/services/geminiService.js</code></td>
+              <td>Model-backed parser(s).</td>
+              <td>Turns raw text into structured JSON using Gemini and a strict schema.</td>
+            </tr>
+            <tr>
+              <td><code>backend/services/fallbackParser.js</code></td>
+              <td>Local parser only for failure cases.</td>
+              <td>Provides safety when model-backed paths are unavailable.</td>
+            </tr>
+            <tr>
+              <td><code>backend/services/menuMatcher.js</code></td>
+              <td>Matching helpers.</td>
+              <td>Connects AI output to real MongoDB menu names, including typo tolerance.</td>
+            </tr>
+            <tr>
+              <td><code>backend/services/orderValidation.js</code></td>
+              <td>Validation and pricing.</td>
+              <td>Decides what is actually addable and computes final prices.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel span-6">
+        <h3>server.js import-by-import</h3>
+        <ul>
+          <li><code>require('dotenv').config()</code> loads environment variables from <code>.env</code>.</li>
+          <li><code>express</code> creates the HTTP app.</li>
+          <li><code>mongodb</code> provides the MongoDB client and <code>ObjectId</code>.</li>
+          <li><code>cors</code> allows the Angular dev server to call the backend.</li>
+          <li><code>body-parser</code> parses JSON request bodies.</li>
+          <li><code>registerAiRoutes</code> is the AI endpoint module.</li>
+        </ul>
+      </div>
+
+      <div class="panel span-6">
+        <h3>server.js step-by-step behavior</h3>
+        <ul>
+          <li>It creates <code>app</code> and a Mongo client.</li>
+          <li>It sets the Mongo URL from <code>MONGO_URL</code> or defaults to localhost.</li>
+          <li>It mounts the AI route before the old pizza and order routes.</li>
+          <li>It exposes the existing APIs for pizzas, ingredients, users, orders, and admin stats.</li>
+          <li>It listens on <code>PORT</code> or port 7000.</li>
+        </ul>
+      </div>
+
+      <div class="panel span-12">
+        <h3>routes/ai.js line-by-line explanation</h3>
+        <div class="stack small">
+          <p><strong>Imports:</strong></p>
+          <ul>
+            <li><code>parseOrderWithGemini</code> = primary model call.</li>
+            <li><code>parseOrderWithSecondaryGemini</code> = backup model call.</li>
+            <li><code>parseFallback</code> = local parser only if both models fail.</li>
+            <li><code>validateAndPrice</code> = MongoDB validation + pricing.</li>
+          </ul>
+          <p><strong>Handler logic:</strong></p>
+          <ol>
+            <li>Read <code>req.body.text</code> and reject empty or oversized input.</li>
+            <li>Connect to MongoDB using the shared connection URL and db name.</li>
+            <li>Read the authoritative menu collections into memory.</li>
+            <li>Try the primary Gemini model.</li>
+            <li>If the primary model fails, try the secondary Gemini model.</li>
+            <li>If both fail, use the local fallback parser.</li>
+            <li>Validate every item against MongoDB.</li>
+            <li>Return a response with availability, totals, and cart-ready line items.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid section" id="code">
+      <div class="panel span-12">
+        <h2>4. Detailed code walkthrough: Gemini service</h2>
+        <details open>
+          <summary>geminiService.js</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>Imports / constants</strong></p>
+            <ul>
+              <li><code>GEMINI_MODEL</code> = primary Gemini model name from <code>process.env.GEMINI_MODEL</code>.</li>
+              <li><code>SECONDARY_GEMINI_MODEL</code> = backup Gemini model name from <code>process.env.SECONDARY_GEMINI_MODEL</code>.</li>
+              <li><code>GEMINI_TIMEOUT_MS</code> = how long the app waits before aborting a model request.</li>
+              <li><code>QUOTA_COOLDOWN_MS</code> = per-model cooldown after a 429 rate-limit response.</li>
+              <li><code>quotaCooldownUntilByModel</code> = in-memory map tracking cooldown per model name.</li>
+            </ul>
+            <p><strong>Prompt blocks</strong></p>
+            <ul>
+              <li><code>SYSTEM_PROMPT_PRIMARY</code> = strict parser prompt. It forces structured JSON and explains pizza/topping/custom rules.</li>
+              <li><code>SYSTEM_PROMPT_SECONDARY</code> = more forgiving backup prompt for vague prompts like “something spicy” or incomplete wording.</li>
+            </ul>
+            <p><strong>Helper functions</strong></p>
+            <ul>
+              <li><code>buildMenuReference()</code> turns the MongoDB menu arrays into a text block so Gemini can ground itself on real menu names.</li>
+              <li><code>getCooldownUntil()</code> reads the model-specific cooldown timestamp.</li>
+              <li><code>markQuotaCooldown()</code> starts the cooldown window when Gemini returns HTTP 429.</li>
+              <li><code>parseOrderWithGeminiModel()</code> is the shared low-level caller used by both primary and secondary model paths.</li>
+            </ul>
+            <p><strong>Primary path</strong></p>
+            <ul>
+              <li><code>parseOrderWithGemini()</code> calls the primary model with the strict prompt.</li>
+              <li>It returns structured JSON with <code>intent</code> and <code>items</code>.</li>
+              <li>It never decides availability or pricing.</li>
+            </ul>
+            <p><strong>Secondary path</strong></p>
+            <ul>
+              <li><code>parseOrderWithSecondaryGemini()</code> calls the backup model.</li>
+              <li>This path exists so vague requests get a second AI attempt before the local parser runs.</li>
+            </ul>
+            <div class="callout good">
+              <strong>Why this matters:</strong> This is the change that removes the “literal fallback only” behavior. The app is no longer dependent on just one model.
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>fallbackParser.js</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>Imports</strong></p>
+            <ul>
+              <li><code>extractLeadingQuantity()</code> = parses “2 pepperoni pizzas” into quantity 2.</li>
+              <li><code>extractPeopleCount()</code> = parses “for 10 people”.</li>
+              <li><code>servingQuantityForPeople()</code> = converts group size into pizza quantity.</li>
+            </ul>
+            <p><strong>Main logic</strong></p>
+            <ul>
+              <li><code>stripLeadingFillers()</code> removes filler words like please/can you/build me/add/make/order.</li>
+              <li><code>tryParseCustomization()</code> recognizes “remove X and add only Y” or “only X and Y” and emits a custom pizza.</li>
+              <li><code>parse()</code> handles group-size requests, custom topping-only requests, simple pizzas with toppings, and generic multi-item lists.</li>
+            </ul>
+            <div class="callout warn">
+              <strong>Important:</strong> This parser is still a safety net, not the primary intelligence layer. It is much better than before, but it is intentionally less capable than Gemini.
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>menuMatcher.js</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>Purpose</strong></p>
+            <ul>
+              <li>Maps AI-generated names to actual MongoDB pizzas and ingredients.</li>
+              <li>Tolerates simple spelling mistakes.</li>
+              <li>Provides recommendations for vague pizza requests like “a pizza”.</li>
+            </ul>
+            <p><strong>Functions</strong></p>
+            <ul>
+              <li><code>tokenize()</code> normalizes text into comparable tokens.</li>
+              <li><code>levenshtein()</code> calculates edit distance for typo tolerance.</li>
+              <li><code>tokensClose()</code> decides whether two tokens are close enough to count as a match.</li>
+              <li><code>fuzzyOverlapScore()</code> scores how well the query matches a candidate.</li>
+              <li><code>matchPizza()</code> returns exact, fuzzy, or suggestion-based pizza matches.</li>
+              <li><code>matchIngredient()</code> returns a matching topping or <code>null</code>.</li>
+              <li><code>extractLeadingQuantity()</code> parses numeric and word-based quantities.</li>
+              <li><code>extractPeopleCount()</code> finds “for N people/guests/adults/folks”.</li>
+              <li><code>servingQuantityForPeople()</code> uses a 3-people-per-pizza heuristic.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>orderValidation.js</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>Purpose</strong></p>
+            <ul>
+              <li>Validates each parsed item independently against MongoDB.</li>
+              <li>Builds the final cart items with real prices.</li>
+              <li>Allows a valid pizza to be added even if another requested topping/item is unavailable.</li>
+            </ul>
+            <p><strong>Important helpers</strong></p>
+            <ul>
+              <li><code>addStandaloneIngredient()</code> adds a topping/side/drink that is meant to stand alone.</li>
+              <li><code>rawItem.type === 'topping'</code> means the AI identified a standalone item.</li>
+              <li><code>rawItem.type === 'custom'</code> means a pizza built only from toppings.</li>
+              <li><code>rawItem.type === 'pizza'</code> means a fixed menu pizza item.</li>
+            </ul>
+            <p><strong>Validation behavior</strong></p>
+            <ul>
+              <li>Every pizza and every topping is checked separately against MongoDB.</li>
+              <li>Unavailable toppings do not block the available pizza.</li>
+              <li>Prices come from MongoDB only; Gemini pricing is ignored.</li>
+              <li>Response includes <code>availableItems</code>, <code>unavailableItems</code>, <code>cartItems</code>, <code>total</code>, and <code>message</code>.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="grid section" id="frontend">
+      <div class="panel span-12">
+        <h2>5. Detailed code walkthrough: frontend</h2>
+        <details open>
+          <summary>ai-order.service.ts</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>Imports</strong></p>
+            <ul>
+              <li><code>Injectable</code> makes the service injectable application-wide.</li>
+              <li><code>HttpClient</code> sends HTTP requests to the backend.</li>
+              <li><code>Observable</code> is the async type returned by the HTTP call.</li>
+              <li><code>environment.apiUrl</code> points to the backend base URL.</li>
+              <li><code>CartItem</code> defines the cart payload shape returned from the backend.</li>
+            </ul>
+            <p><strong>What <code>parseOrder()</code> does</strong></p>
+            <ul>
+              <li>Posts raw user text to <code>POST /api/ai/order</code>.</li>
+              <li>Returns an observable of <code>AiOrderResponse</code>.</li>
+              <li>It does not interpret the text itself.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>ai-order-base.ts</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>Purpose</strong></p>
+            <ul>
+              <li>This is the shared controller logic for AI UIs.</li>
+              <li>Both the floating widget and the Meal Builder page reuse it.</li>
+            </ul>
+            <p><strong>Fields</strong></p>
+            <ul>
+              <li><code>userText</code> = current text input.</li>
+              <li><code>isLoading</code> = UI loading state.</li>
+              <li><code>response</code> = the last backend response.</li>
+              <li><code>errorMessage</code> = human-readable UI error.</li>
+            </ul>
+            <p><strong>Methods</strong></p>
+            <ul>
+              <li><code>submit()</code> sends the text to the AI service and pushes returned cart items into the real cart service.</li>
+              <li><code>goToCart()</code> routes to <code>/shoppingcart</code>.</li>
+              <li><code>toppingNames()</code> formats topping names for display.</li>
+              <li><code>startOver()</code> clears the input and response state.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>ai-widget.component.ts / html / css</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>What this component is</strong></p>
+            <ul>
+              <li>A global floating chat assistant mounted in <code>app.component.html</code>.</li>
+              <li>It is not a routed page and not a navbar tab.</li>
+              <li>It has chat history, assistant messages, loading animation, and voice input.</li>
+            </ul>
+            <p><strong>Imports and dependencies</strong></p>
+            <ul>
+              <li><code>Router</code> is used so the widget can send the user to the cart.</li>
+              <li><code>AiOrderService</code> sends the raw natural-language prompt to the backend.</li>
+              <li><code>ShoppingCartService</code> adds validated cart items into the actual cart state.</li>
+              <li><code>AiOrderBaseComponent</code> provides the shared submit logic.</li>
+            </ul>
+            <p><strong>Voice input</strong></p>
+            <ul>
+              <li><code>SpeechRecognition</code> / <code>webkitSpeechRecognition</code> are detected dynamically on the browser.</li>
+              <li>If available, the microphone button appears.</li>
+              <li>The transcript is appended into <code>userText</code>.</li>
+            </ul>
+            <p><strong>Template behavior</strong></p>
+            <ul>
+              <li>Open/close floating panel with a robot button.</li>
+              <li>Show empty-state guidance when no chat exists.</li>
+              <li>Render each user and assistant message from the conversation array.</li>
+              <li>Show a Go to Cart button only when the backend actually added items.</li>
+            </ul>
+            <p><strong>CSS behavior</strong></p>
+            <ul>
+              <li>Fixed-position bottom-right launcher.</li>
+              <li>Pulsing ring animation on the button.</li>
+              <li>Slide-in panel animation.</li>
+              <li>Typing dots animation while the AI request is loading.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>meal-builder.component.ts / html / css</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>Purpose</strong></p>
+            <ul>
+              <li>A dedicated full-page AI meal builder.</li>
+              <li>Uses the same service and same cart update logic as the widget.</li>
+            </ul>
+            <p><strong>Why it still exists</strong></p>
+            <ul>
+              <li>Some users prefer a full-screen guided experience over a floating widget.</li>
+              <li>Both UI surfaces use the same backend AI pipeline.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>shopping-cart.service.ts</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>Imports</strong></p>
+            <ul>
+              <li><code>BehaviorSubject</code> stores the live cart state.</li>
+              <li><code>Observable</code> exposes the cart to subscribers.</li>
+            </ul>
+            <p><strong>Key methods</strong></p>
+            <ul>
+              <li><code>addToCart()</code> adds a cart line if the id does not already exist.</li>
+              <li><code>addOrIncrementCart()</code> is used by the AI pipeline to merge validated items into the cart.</li>
+              <li><code>removeFromCart()</code> removes a cart item.</li>
+              <li><code>updateQuantity()</code> changes item quantity and removes it if quantity drops to zero.</li>
+              <li><code>clearCart()</code> empties the cart.</li>
+              <li><code>updateMessage()</code> pushes the new cart state to subscribers and saves it to localStorage.</li>
+              <li><code>loadCart()</code> restores persisted cart state on startup.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>app.module.ts and app-routing.module.ts</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <p><strong>app.module.ts</strong></p>
+            <ul>
+              <li>Declares the app root, menu pages, order pages, profile pages, and the floating widget.</li>
+              <li>Imports <code>BrowserModule</code>, <code>FormsModule</code>, <code>HttpClientModule</code>, and the routing module.</li>
+              <li>This is where Angular knows the widget exists.</li>
+            </ul>
+            <p><strong>app-routing.module.ts</strong></p>
+            <ul>
+              <li>Routes are defined for the regular pages and the Meal Builder page.</li>
+              <li>The old AI Assistant tab route was removed; the assistant now lives globally as a widget.</li>
+              <li>This is why the widget appears on every page instead of only one route.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>app.component.html</summary>
+          <div class="stack small" style="margin-top: 12px;">
+            <ul>
+              <li>Renders the navbar.</li>
+              <li>Renders the page router outlet.</li>
+              <li>Renders <code>&lt;app-ai-widget&gt;</code> once at the root so it is globally available.</li>
+              <li>Renders the footer.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="grid section" id="apis">
+      <div class="panel span-12">
+        <h2>6. API map with frontend consumers</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Caller</th>
+              <th>Purpose</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>GET /pizzas</code></td><td>OrderpizzaComponent</td><td>Load menu pizzas</td><td>Used for search/filter/order cards.</td></tr>
+            <tr><td><code>GET /ingredients</code></td><td>BuildpizzaComponent</td><td>Load toppings</td><td>Used for custom pizza builder cards.</td></tr>
+            <tr><td><code>POST /api/ai/order</code></td><td>AiWidgetComponent, MealBuilderComponent</td><td>Natural-language ordering</td><td>Primary AI endpoint.</td></tr>
+            <tr><td><code>POST /save-order</code></td><td>ShoppingcartComponent</td><td>Persist the final order</td><td>Runs when placing the order.</td></tr>
+            <tr><td><code>POST /signup</code></td><td>SignupComponent</td><td>User registration</td><td>Creates new user records.</td></tr>
+            <tr><td><code>POST /login</code></td><td>LoginComponent</td><td>Authentication</td><td>Returns logged-in user object.</td></tr>
+            <tr><td><code>GET /orders/user/:userId</code></td><td>OrderHistoryComponent</td><td>Order history</td><td>Shows user-specific orders.</td></tr>
+            <tr><td><code>GET /orders</code></td><td>AdminPanelComponent</td><td>Admin order list</td><td>Used by admin dashboard.</td></tr>
+            <tr><td><code>PUT /orders/:orderId/status</code></td><td>AdminPanelComponent</td><td>Update order status</td><td>Admin workflow.</td></tr>
+            <tr><td><code>GET /users/:userId</code></td><td>ProfileComponent</td><td>Load profile</td><td>Used by profile page.</td></tr>
+            <tr><td><code>PUT /users/:userId</code></td><td>ProfileComponent</td><td>Save profile edits</td><td>Updates user document.</td></tr>
+            <tr><td><code>GET /admin/stats</code></td><td>AdminPanelComponent</td><td>Dashboard stats</td><td>Counts users, orders, pizzas.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid section">
+      <div class="panel span-12">
+        <h2>7. How the API key is integrated</h2>
+        <div class="mini-grid">
+          <div class="card">
+            <h3>Where the key lives</h3>
+            <ul>
+              <li>The Gemini API key is only read in backend code.</li>
+              <li>It is loaded through <code>dotenv</code> from <code>backend/.env</code>.</li>
+              <li>The frontend only knows <code>apiUrl</code> and never sees the key.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>What the backend does with it</h3>
+            <ul>
+              <li><code>process.env.GEMINI_API_KEY</code> is read inside <code>geminiService.js</code>.</li>
+              <li>The key is placed on the Gemini REST URL as a query parameter.</li>
+              <li>The backend sends the request, not Angular.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout bad">
+          <strong>Security rule:</strong> the key must never be copied into Angular <code>environment.ts</code>, HTML, or browser JavaScript.
+        </div>
+      </div>
+    </section>
+
+    <section class="grid section">
+      <div class="panel span-12">
+        <h2>8. Why some prompts still fail</h2>
+        <div class="two-col">
+          <div class="card">
+            <h3>When Gemini is available</h3>
+            <p class="small">The AI should understand broad prompts like “I want something spicy” or “build a meal for 10 people” because the second Gemini path can reason over the real menu names and return a structured recommendation.</p>
+          </div>
+          <div class="card">
+            <h3>When Gemini is rate-limited</h3>
+            <p class="small">The backend will degrade to the local parser. That parser is now smarter than before, but it is still rule-based. That is the difference between “AI reasoning” and “safe fallback parsing.”</p>
+          </div>
+        </div>
+        <div class="callout warn">
+          The app is now AI-first with a secondary AI fallback, but if both model-backed paths fail, it is still possible to get a literal-looking fallback answer. That is expected and safe, not a broken cart flow.
+        </div>
+      </div>
+    </section>
+
+    <section class="grid section">
+      <div class="panel span-12">
+        <h2>9. Quick file index</h2>
+        <table>
+          <thead>
+            <tr><th>File</th><th>Main responsibility</th><th>Key functions / methods</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>backend/services/geminiService.js</code></td><td>Primary + secondary model-backed parsing</td><td><code>parseOrderWithGemini</code>, <code>parseOrderWithSecondaryGemini</code></td></tr>
+            <tr><td><code>backend/services/fallbackParser.js</code></td><td>Local parser safety net</td><td><code>parse</code>, <code>tryParseCustomization</code>, <code>stripLeadingFillers</code></td></tr>
+            <tr><td><code>backend/services/menuMatcher.js</code></td><td>Menu matching and typo tolerance</td><td><code>matchPizza</code>, <code>matchIngredient</code>, <code>extractPeopleCount</code></td></tr>
+            <tr><td><code>backend/services/orderValidation.js</code></td><td>Validation + pricing</td><td><code>validateAndPrice</code>, <code>buildMessage</code></td></tr>
+            <tr><td><code>backend/routes/ai.js</code></td><td>AI endpoint orchestration</td><td><code>registerAiRoutes</code></td></tr>
+            <tr><td><code>frontend/src/app/ai-order.service.ts</code></td><td>HTTP bridge to the backend</td><td><code>parseOrder</code></td></tr>
+            <tr><td><code>frontend/src/app/ai-order-base.ts</code></td><td>Shared AI UI logic</td><td><code>submit</code>, <code>goToCart</code>, <code>startOver</code></td></tr>
+            <tr><td><code>frontend/src/app/ai-widget/ai-widget.component.ts</code></td><td>Floating assistant UI</td><td><code>toggleWidget</code>, <code>toggleVoice</code>, <code>submit</code></td></tr>
+            <tr><td><code>frontend/src/app/meal-builder/meal-builder.component.ts</code></td><td>Full-page meal builder</td><td>Inherits shared base behavior</td></tr>
+            <tr><td><code>frontend/src/app/shopping-cart.service.ts</code></td><td>Cart state and persistence</td><td><code>addToCart</code>, <code>addOrIncrementCart</code>, <code>updateQuantity</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid section">
+      <div class="panel span-12">
+        <h2>10. One-line conclusion</h2>
+        <p>
+          The user text is sent to Gemini first, then validated against MongoDB, then pushed into the real cart state.
+          The fallback is now a second-step safety net, not the primary experience.
+        </p>
+        <p class="footer-note">
+          If you want, I can make a version of this guide that annotates each file with exact source-line callouts and example request/response payloads for every API.
+        </p>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

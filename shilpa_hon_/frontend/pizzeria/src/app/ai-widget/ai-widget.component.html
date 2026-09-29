@@ -1,0 +1,87 @@
+<div class="ai-widget-launcher" [class.hidden]="isOpen">
+  <button type="button" class="ai-launcher-btn" (click)="toggleWidget()" aria-label="Open AI Pizza Assistant" title="Ask me anything!">
+    <i class="fas fa-robot"></i>
+    <span class="pulse-ring" aria-hidden="true"></span>
+  </button>
+  <span class="launcher-tooltip">Ask me anything!</span>
+</div>
+
+<div class="ai-widget-panel" *ngIf="isOpen" role="dialog" aria-label="AI Pizza Assistant" aria-modal="false">
+  <div class="ai-widget-header">
+    <div class="header-title">
+      <i class="fas fa-robot"></i>
+      <span>Pizza Assistant</span>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="icon-btn" (click)="startOver()" *ngIf="messages.length" title="Clear conversation" aria-label="Clear conversation">
+        <i class="fas fa-broom"></i>
+      </button>
+      <button type="button" class="icon-btn" (click)="toggleWidget()" aria-label="Close assistant">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="ai-widget-body">
+    <div class="empty-state" *ngIf="!messages.length">
+      <i class="fas fa-pizza-slice"></i>
+      <p>Hi! I'm your pizza assistant.</p>
+      <p class="text-muted small">
+        You can ask me anything - "Add a chicken pizza with extra cheese", "Build a meal for 6 people",
+        or "Make a pizza with only tomato and jalapenos".
+      </p>
+    </div>
+
+    <div class="chat-message" *ngFor="let msg of messages" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+      <div class="bubble">
+        <p>{{ msg.text }}</p>
+
+        <ng-container *ngIf="msg.response as res">
+          <ul class="mini-list" *ngIf="res.availableItems.length">
+            <li *ngFor="let item of res.availableItems">
+              {{ item.quantity }}x {{ item.name }}
+              <span class="small text-muted" *ngIf="item.toppings.length"> + {{ toppingNames(item) }}</span>
+            </li>
+          </ul>
+          <ul class="mini-list unavailable" *ngIf="res.unavailableItems.length">
+            <li *ngFor="let item of res.unavailableItems">{{ item.name }} - {{ item.reason }}</li>
+          </ul>
+          <div class="mini-total" *ngIf="res.anyAdded">Total: &#8377;{{ res.total }}</div>
+          <button type="button" class="btn-cart-link" *ngIf="res.anyAdded" (click)="goToCart()">
+            <i class="fas fa-shopping-cart"></i> Go to Cart
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="chat-message assistant" *ngIf="isLoading">
+      <div class="bubble typing" aria-label="Assistant is thinking">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-widget-input">
+    <textarea
+      rows="1"
+      [(ngModel)]="userText"
+      (keydown.enter)="$event.preventDefault(); submit()"
+      placeholder="Ask me anything... e.g. Add a Margherita with extra cheese"
+      [disabled]="isLoading"
+      aria-label="Message the pizza assistant"></textarea>
+    <button
+      type="button"
+      class="mic-btn"
+      *ngIf="voiceSupported"
+      [class.listening]="isListening"
+      (click)="toggleVoice()"
+      [attr.aria-pressed]="isListening"
+      title="Speak your order"
+      aria-label="Speak your order">
+      <i class="fas fa-microphone"></i>
+    </button>
+    <button type="button" class="send-btn" [disabled]="!userText.trim() || isLoading" (click)="submit()" aria-label="Send message">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
